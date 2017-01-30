@@ -65,23 +65,23 @@ class UserCrudController extends CrudController
            'type' => "select_multiple",
            'name' => 'roles', // the method that defines the relationship in your Model
            'entity' => 'roles', // the method that defines the relationship in your Model
-           'attribute' => "name", // foreign key attribute that is shown to user
+           'attribute' => "display_name", // foreign key attribute that is shown to user
            'model' => "App\Models\Role", // foreign key model
         ]
         );
 
         $this->crud->addField([
           'label' => "Role",
-          'type' => 'select2_multiple_user_custom',
+          'type' => 'select2_user_custom',
           'name' => 'roles', // the method that defines the relationship in your Model
           'entity' => 'roles', // the method that defines the relationship in your Model
-          'attribute' => 'name', // foreign key attribute that is shown to user
+          'attribute' => 'display_name', // foreign key attribute that is shown to user
           'model' => "App\Models\Role", // foreign key model
           'pivot' => true, // on create&update, do you need to add/delete pivot table entries?
           'foreign_pivot_key' => 'role_id'
         ]);
 
-        
+
 
         // ------ CRUD FIELDS
         // $this->crud->addField($options, 'update/create/both');
@@ -157,7 +157,9 @@ class UserCrudController extends CrudController
         }
         $request->request->set('password', bcrypt($request->input('password')));
 
-        //TODO:: Validate Roles if the creator have the permission
+        $request->request->set('roles', [$request->input('roles')]);
+
+        //TODO:: SET VALIDATION in Request Validate Roles if the creator have the permission
 
         $redirect_location = parent::storeCrud($request);
 

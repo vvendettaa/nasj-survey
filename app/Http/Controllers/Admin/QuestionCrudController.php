@@ -43,10 +43,13 @@ class QuestionCrudController extends CrudController
 
         $this->crud->addField([  // Select2
    'label' => "Survey",
-   'type' => 'select2_multiple_user_custom',
+   'type' => 'select2_custom',
    'name' => 'survey_id', // the db column for the foreign key
    'entity' => 'survey', // the method that defines the relationship in your Model
    'attribute' => 'name', // foreign key attribute that is shown to user
+   'attributes' => [
+     'id' => 'survey_sel'
+   ],
    'model' => "App\Models\Survey" // foreign key model
 ]);
 
@@ -62,10 +65,13 @@ $this->crud->addColumn([
 
 $this->crud->addField([  // Select2
 'label' => "Type",
-'type' => 'select2_multiple_user_custom',
+'type' => 'select2_custom',
 'name' => 'question_type_id', // the db column for the foreign key
 'entity' => 'question_type', // the method that defines the relationship in your Model
 'attribute' => 'name', // foreign key attribute that is shown to user
+'attributes' => [
+  'id' => 'type_sel'
+],
 'model' => "App\Models\Question_type" // foreign key model
 ]);
 
@@ -82,12 +88,60 @@ $this->crud->addColumn([
 
 $this->crud->addField([  // Select2
 'label' => "Parent",
-'type' => 'select2_multiple_user_custom',
+'type' => 'select2_custom',
 'name' => 'parent_id', // the db column for the foreign key
 'entity' => 'parent', // the method that defines the relationship in your Model
 'attribute' => 'question', // foreign key attribute that is shown to user
+'attributes' => [
+  'id' => 'parent_sel'
+],
 'model' => "App\Models\Question" // foreign key model
 ]);
+
+
+$this->crud->addColumn([
+   'name' => 'question', // The db column name
+   'label' => "Question" // Table column heading
+]);
+
+$this->crud->addField([ // Text
+    'name' => 'question',
+    'label' => "Question",
+    'type' => 'text',
+]);
+
+
+$this->crud->addField([  // Select2
+'label' => "Type",
+'type' => 'select2_custom',
+'name' => 'question_special_type_id', // the db column for the foreign key
+'entity' => 'question_type', // the method that defines the relationship in your Model
+'attribute' => 'name', // foreign key attribute that is shown to user
+'attributes' => [
+  'id' => 'type2_sel'
+],
+'model' => "App\Models\Question_type" // foreign key model
+]);
+//TODO:: remove the last two options.
+
+$this->crud->addColumn([
+   'name' => 'answer', // The db column name
+   'label' => "Answers", // Table column heading
+   'type' => 'array'
+]);
+
+
+$this->crud->addField([
+  'name' => 'answer',
+  'label' => 'Answers',
+  'type' => 'custom_answer',
+  'attributes' => [
+    'class' => 'custom_answer_field'
+  ]
+]);
+
+
+
 
         // ------ CRUD FIELDS
         // $this->crud->addField($options, 'update/create/both');

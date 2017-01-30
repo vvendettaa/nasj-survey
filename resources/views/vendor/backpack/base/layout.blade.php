@@ -258,67 +258,67 @@
 
 
 
-    $(document).ready(function(){
-      $.ajax({
-          type: "POST",
-          url: 'test-view/employees',
-          data: "",
-          success: function(data) {
-              //return data;
-              drawTree(data);
-          }
-      });
-    // $('#tree').treeview({data: getTree()});
-
-    $('#myTabs a').click(function (e) {
-      e.preventDefault()
-      $(this).tab('show')
-    });
-
-    // With JQuery
-    $('.ex1').slider({
-    	formatter: function(value) {
-    		return 'Current value: ' + value;
-    	}
-    });
-
-    $('#stars').on('starrr:change', function(e, value){
-        $('#count').html(value);
-      });
-
-      $('#stars-existing').on('starrr:change', function(e, value){
-        $('#count-existing').html(value);
-      });
-
-
-
-
-});
-
-  function drawTree(data){
-    $('#tree').treeview({
-      data: data,
-      showIcon: true,
-      showCheckbox: true,
-      onNodeChecked: function(event, node) {
-          $('#checkable-output').prepend('<p>' + node.text + ' was checked</p>');
-      },
-      onNodeUnchecked: function (event, node) {
-          $('#checkable-output').prepend('<p>' + node.text + ' was unchecked</p>');
-      }
-    });
-  }
-
-    function getTree() {
-        $.ajax({
-            type: "POST",
-            url: 'test-view/employees',
-            data: "",
-            success: function(data) {
-                return data;
-            }
-        })
-    };
+    // $(document).ready(function(){
+//       $.ajax({
+//           type: "POST",
+//           url: 'test-view/employees',
+//           data: "",
+//           success: function(data) {
+//               //return data;
+//               drawTree(data);
+//           }
+//       });
+//     // $('#tree').treeview({data: getTree()});
+//
+//     $('#myTabs a').click(function (e) {
+//       e.preventDefault()
+//       $(this).tab('show')
+//     });
+//
+//     // With JQuery
+//     $('.ex1').slider({
+//     	formatter: function(value) {
+//     		return 'Current value: ' + value;
+//     	}
+//     });
+//
+//     $('#stars').on('starrr:change', function(e, value){
+//         $('#count').html(value);
+//       });
+//
+//       $('#stars-existing').on('starrr:change', function(e, value){
+//         $('#count-existing').html(value);
+//       });
+//
+//
+//
+//
+// });
+//
+//   function drawTree(data){
+//     $('#tree').treeview({
+//       data: data,
+//       showIcon: true,
+//       showCheckbox: true,
+//       onNodeChecked: function(event, node) {
+//           $('#checkable-output').prepend('<p>' + node.text + ' was checked</p>');
+//       },
+//       onNodeUnchecked: function (event, node) {
+//           $('#checkable-output').prepend('<p>' + node.text + ' was unchecked</p>');
+//       }
+//     });
+//   }
+//
+//     function getTree() {
+//         $.ajax({
+//             type: "POST",
+//             url: 'test-view/employees',
+//             data: "",
+//             success: function(data) {
+//                 return data;
+//             }
+//         })
+//     };
     </script>
 </body>
 </html>
