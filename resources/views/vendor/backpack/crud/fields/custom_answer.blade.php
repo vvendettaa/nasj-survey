@@ -3,7 +3,7 @@
     <label>{!! $field['label'] !!}</label>
       <div class="custom_answer col-md-12">
           <div class="entry input-group col-md-5 entry_custom">
-            <input class="form-control" name="fields[]" type="text" placeholder="Type something" />
+            <input class="form-control" name="answer[]" type="text" placeholder="Type something" />
         	<span class="input-group-btn">
                 <button class="btn btn-success btn-add" type="button">
                     <span class="glyphicon glyphicon-plus"></span>
@@ -16,7 +16,7 @@
 
 {{-- star
 <div class="entry input-group col-md-5 entry_custom">
-  <input class="form-control" name="fields[]" type="text" placeholder="Type something" />
+  <input class="form-control" name="answer[]" type="text" placeholder="Type something" />
 <span class="input-group-btn">
   <button class="btn btn-success btn-add" type="button" disabled="true">
           <span class="glyphicon glyphicon-star"></span>
@@ -97,16 +97,16 @@
           $('#type2_sel').parent().hide();
           switch($('#type_sel').val()) {
               case '1':
-                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
+                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
                   break;
               case '2':
-                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
+                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
                   break;
               case '3':
-                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="1-10" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-cog"></span></button></span></div>');
+                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="1-10" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-cog"></span></button></span></div>');
                   break;
               case '4':
-                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="How many stars?" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-star"></span></button></span></div>');
+                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="How many stars?" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-star"></span></button></span></div>');
                   break;
               case '5':
                   $('.custom_answer').parent().hide();
@@ -116,8 +116,11 @@
                   $('#type2_sel').parent().show();
                   // ?swap_type_ids();
                   break;
+              case '7':
+                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Field Sample (Placeholder)?" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-edit"></span></button></span></div>');
+                  break;
               default:
-                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
+                  $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
           }
           if($(this).val() == 6){
             $('#parent_sel').parent().show();
@@ -129,16 +132,16 @@
             $('#parent_sel').parent().show();
             switch($('#type2_sel').val()) {
                 case '1':
-                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
+                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
                     break;
                 case '2':
-                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
+                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
                     break;
                 case '3':
-                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="1-10" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-cog"></span></button></span></div>');
+                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="1-10" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-cog"></span></button></span></div>');
                     break;
                 case '4':
-                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="How many stars?" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-star"></span></button></span></div>');
+                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="How many stars?" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-star"></span></button></span></div>');
                     break;
                 case '5':
                     // $('.custom_answer').parent().hide();
@@ -148,8 +151,11 @@
                     // $('#type2_sel').parent().show();
                     // ?swap_type_ids();
                     break;
+                case '7':
+                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Field Sample (Placeholder)?" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button" disabled="true"><span class="glyphicon glyphicon-star"></span></button></span></div>');
+                    break;
                 default:
-                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="fields[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
+                    $('.custom_answer').html('<div class="entry input-group col-md-5 entry_custom"><input class="form-control" name="answer[]" type="text" placeholder="Type something" /><span class="input-group-btn"><button class="btn btn-success btn-add" type="button"><span class="glyphicon glyphicon-plus"></span></button></span></div>');
             }
           });
       }

@@ -19,7 +19,7 @@ class Question extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $guarded = ['id'];
-    protected $fillable = ['survey_id', 'question_type_id', 'parent_id', 'question', 'answer'];
+    protected $fillable = ['survey_id', 'question_section_id', 'question_type_id', 'parent_id', 'question', 'answer'];
     protected $casts = [
         'answer' => 'json'
     ];
@@ -34,6 +34,11 @@ class Question extends Model
   public function survey()
     {
         return $this->belongsTo('App\Models\Survey');
+    }
+
+  public function question_section()
+    {
+        return $this->belongsTo('App\Models\Question_section');
     }
 
   public function question_type()

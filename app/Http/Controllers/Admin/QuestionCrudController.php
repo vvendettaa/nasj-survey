@@ -30,6 +30,7 @@ class QuestionCrudController extends CrudController
 		*/
 
         $this->crud->setFromDb();
+        $this->crud->removeColumns(['survey_id', 'parent_id', 'question_section_id', 'question_type_id', 'answer']);
 
         $this->crud->addColumn([
    // 1-n relationship
@@ -51,6 +52,29 @@ class QuestionCrudController extends CrudController
      'id' => 'survey_sel'
    ],
    'model' => "App\Models\Survey" // foreign key model
+]);
+
+
+$this->crud->addColumn([
+// 1-n relationship
+'label' => "Section", // Table column heading
+'type' => "select",
+'name' => 'question_section_id', // the column that contains the ID of that connected entity;
+'entity' => 'question_section', // the method that defines the relationship in your Model
+'attribute' => "name", // foreign key attribute that is shown to user
+'model' => "App\Models\Question_section", // foreign key model
+]);
+
+$this->crud->addField([  // Select2
+'label' => "Section",
+'type' => 'select2_custom',
+'name' => 'question_section_id', // the db column for the foreign key
+'entity' => 'question_section', // the method that defines the relationship in your Model
+'attribute' => 'name', // foreign key attribute that is shown to user
+'attributes' => [
+'id' => 'section_sel'
+],
+'model' => "App\Models\Question_section" // foreign key model
 ]);
 
 $this->crud->addColumn([
@@ -80,7 +104,7 @@ $this->crud->addColumn([
 // 1-n relationship
 'label' => "Parent", // Table column heading
 'type' => "select",
-'name' => 'parent_id', // the column that contains the ID of that connected entity;
+'name' => 'parent', // the column that contains the ID of that connected entity;
 'entity' => 'parent', // the method that defines the relationship in your Model
 'attribute' => "question", // foreign key attribute that is shown to user
 'model' => "App\Models\Question", // foreign key model
@@ -97,12 +121,13 @@ $this->crud->addField([  // Select2
 ],
 'model' => "App\Models\Question" // foreign key model
 ]);
+//TODO::Add where for only parent questions.
 
 
-$this->crud->addColumn([
-   'name' => 'question', // The db column name
-   'label' => "Question" // Table column heading
-]);
+// $this->crud->addColumn([
+//    'name' => 'question', // The db column name
+//    'label' => "Question" // Table column heading
+// ]);
 
 $this->crud->addField([ // Text
     'name' => 'question',
@@ -210,8 +235,10 @@ $this->crud->addField([
 
 	public function store(StoreRequest $request)
 	{
+        //dd(array_filter($request->input('answer')));
+        $request->request->set('answer', json_encode(array_filter($request->input('answer'))));
 		// your additional operations before save here
-        $redirect_location = parent::storeCrud();
+        $redirect_location = parent::storeCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;

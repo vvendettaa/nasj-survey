@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 
-class Survey extends Model
+class Question_section extends Model
 {
     use CrudTrait;
 
@@ -15,11 +15,11 @@ class Survey extends Model
 	|--------------------------------------------------------------------------
 	*/
 
-    protected $table = 'surveys';
+    protected $table = 'question_sections';
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'description', 'start_time', 'end_time'];
+    protected $fillable = ['survey_id', 'name', 'description'];
     // protected $hidden = [];
     // protected $dates = [];
 
@@ -29,21 +29,21 @@ class Survey extends Model
 	|--------------------------------------------------------------------------
 	*/
 
-    public function question_sections()
+    /*
+	|--------------------------------------------------------------------------
+	| RELATIONS
+	|--------------------------------------------------------------------------
+	*/
+
+    public function survey()
     {
-        return $this->hasMany('App\Models\Question_section');
+        return $this->belongsTo('App\Models\Survey');
     }
 
     public function questions()
     {
         return $this->hasMany('App\Models\Question');
     }
-
-    /*
-	|--------------------------------------------------------------------------
-	| RELATIONS
-	|--------------------------------------------------------------------------
-	*/
 
     /*
 	|--------------------------------------------------------------------------

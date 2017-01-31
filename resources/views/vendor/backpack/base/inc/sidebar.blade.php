@@ -24,6 +24,7 @@
           @role(['super_admin', 'admin'])
           <li class="header">Survey Management</li>
           <li><a href="{{ url('admin/survey') }}"><i class="fa fa-dashboard"></i> <span>Manage Surveys</span></a></li>
+          <li><a href="{{ url('admin/question_section') }}"><i class="fa fa-dashboard"></i> <span>Manage Sections</span></a></li>
           <li><a href="{{ url('admin/question') }}"><i class="fa fa-dashboard"></i> <span>Manage Questions</span></a></li>
           @endrole
 
