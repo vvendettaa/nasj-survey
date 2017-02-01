@@ -22,6 +22,9 @@
           <li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-dashboard"></i> <span>{{ trans('backpack::base.dashboard') }}</span></a></li>
 
           @role(['super_admin', 'admin'])
+          <li class="header">HR Management</li>
+          <li><a href="{{ url('admin/employee') }}"><i class="fa fa-dashboard"></i> <span>Manage Directory</span></a></li>
+
           <li class="header">Survey Management</li>
           <li><a href="{{ url('admin/survey') }}"><i class="fa fa-dashboard"></i> <span>Manage Surveys</span></a></li>
           <li><a href="{{ url('admin/question_section') }}"><i class="fa fa-dashboard"></i> <span>Manage Sections</span></a></li>

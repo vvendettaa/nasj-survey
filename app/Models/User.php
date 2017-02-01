@@ -68,6 +68,11 @@ class User extends Authenticatable
       return $this->belongsToMany('App\Models\Role', 'role_user', 'user_id', 'role_id');
     }
 
+    public function answers()
+    {
+        return $this->hasMany('App\Models\Answer');
+    }
+
     /*
 	|--------------------------------------------------------------------------
 	| SCOPES

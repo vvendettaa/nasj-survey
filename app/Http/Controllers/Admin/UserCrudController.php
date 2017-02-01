@@ -26,6 +26,8 @@ class UserCrudController extends CrudController
         $this->crud->setRoute("admin/user");
         $this->crud->setEntityNameStrings('user', 'users');
 
+        $this->crud->enableAjaxTable();
+
         /*
 		|--------------------------------------------------------------------------
 		| BASIC CRUD INFORMATION

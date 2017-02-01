@@ -56,6 +56,11 @@ class Question extends Model
     return $this->hasMany(static::class, 'parent_id');
   }
 
+  public function answers()
+  {
+      return $this->hasMany('App\Models\Answer');
+  }
+
     /*
 	|--------------------------------------------------------------------------
 	| RELATIONS

@@ -30,6 +30,8 @@ class EmployeeCrudController extends CrudController
         $this->crud->setRoute("admin/employee");
         $this->crud->setEntityNameStrings('employee', 'employees');
 
+        $this->crud->enableAjaxTable();
+
         /*
 		|--------------------------------------------------------------------------
 		| BASIC CRUD INFORMATION
@@ -37,6 +39,113 @@ class EmployeeCrudController extends CrudController
 		*/
 
         $this->crud->setFromDb();
+
+        $this->crud->removeColumns(['company_id', 'department_id', 'building_id', 'project_id']);
+        $this->crud->removeField('company_id');
+
+        //company
+
+        if(\Ntrust::hasRole('super_admin')){
+          // $this->crud->addColumn([
+          //    // 1-n relationship
+          //    'label' => "Company", // Table column heading
+          //    'type' => "select",
+          //    'name' => 'company_id', // the column that contains the ID of that connected entity;
+          //    'entity' => 'company', // the method that defines the relationship in your Model
+          //    'attribute' => "name", // foreign key attribute that is shown to user
+          //    'model' => "App\Models\Company", // foreign key model
+          // ]);
+          //
+          //   $this->crud->addField([  // Select2
+          //    'label' => "Company",
+          //    'type' => 'select2_custom',
+          //    'name' => 'company_id', // the db column for the foreign key
+          //    'entity' => 'company', // the method that defines the relationship in your Model
+          //    'attribute' => 'name', // foreign key attribute that is shown to user
+          //    'attributes' => [
+          //      'id' => 'company_sel'
+          //    ],
+          //    'model' => "App\Models\Company" // foreign key model
+          // ]);
+
+
+        }
+
+        //department
+
+        $this->crud->addColumn([
+           // 1-n relationship
+           'label' => "Department", // Table column heading
+           'type' => "select",
+           'name' => 'department_id', // the column that contains the ID of that connected entity;
+           'entity' => 'department', // the method that defines the relationship in your Model
+           'attribute' => "name", // foreign key attribute that is shown to user
+           'model' => "App\Models\Department", // foreign key model
+        ]);
+
+          $this->crud->addField([  // Select2
+           'label' => "Department",
+           'type' => 'select2_custom',
+           'name' => 'department_id', // the db column for the foreign key
+           'entity' => 'department', // the method that defines the relationship in your Model
+           'attribute' => 'name', // foreign key attribute that is shown to user
+           'attributes' => [
+             'id' => 'department_sel'
+           ],
+           'model' => "App\Models\Department" // foreign key model
+        ]);
+
+
+
+        //building
+
+        $this->crud->addColumn([
+           // 1-n relationship
+           'label' => "Building", // Table column heading
+           'type' => "select",
+           'name' => 'building_id', // the column that contains the ID of that connected entity;
+           'entity' => 'building', // the method that defines the relationship in your Model
+           'attribute' => "name", // foreign key attribute that is shown to user
+           'model' => "App\Models\Building", // foreign key model
+        ]);
+
+                $this->crud->addField([  // Select2
+           'label' => "Building",
+           'type' => 'select2_custom',
+           'name' => 'building_id', // the db column for the foreign key
+           'entity' => 'building', // the method that defines the relationship in your Model
+           'attribute' => 'name', // foreign key attribute that is shown to user
+           'attributes' => [
+             'id' => 'building_sel'
+           ],
+           'model' => "App\Models\Building" // foreign key model
+        ]);
+
+        //project
+
+        $this->crud->addColumn([
+           // 1-n relationship
+           'label' => "Project", // Table column heading
+           'type' => "select",
+           'name' => 'project_id', // the column that contains the ID of that connected entity;
+           'entity' => 'project', // the method that defines the relationship in your Model
+           'attribute' => "name", // foreign key attribute that is shown to user
+           'model' => "App\Models\Project", // foreign key model
+        ]);
+
+                $this->crud->addField([  // Select2
+           'label' => "Project",
+           'type' => 'select2_custom',
+           'name' => 'project_id', // the db column for the foreign key
+           'entity' => 'project', // the method that defines the relationship in your Model
+           'attribute' => 'name', // foreign key attribute that is shown to user
+           'attributes' => [
+             'id' => 'project_sel'
+           ],
+           'model' => "App\Models\Project" // foreign key model
+        ]);
+
+
 
         // ------ CRUD FIELDS
         // $this->crud->addField($options, 'update/create/both');

@@ -33,4 +33,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin']], 
     CRUD::resource('survey', 'Admin\SurveyCrudController');
     CRUD::resource('question_section', 'Admin\Question_sectionCrudController');
     CRUD::resource('question', 'Admin\QuestionCrudController');
+
+    CRUD::resource('employee', 'Admin\EmployeeCrudController');
 });

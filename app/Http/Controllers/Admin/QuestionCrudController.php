@@ -13,6 +13,7 @@ class QuestionCrudController extends CrudController
 
     public function setUp()
     {
+      //TODO:: Fix the entire logic of saving parent child relation.
 
         /*
 		|--------------------------------------------------------------------------
@@ -22,6 +23,9 @@ class QuestionCrudController extends CrudController
         $this->crud->setModel("App\Models\Question");
         $this->crud->setRoute("admin/question");
         $this->crud->setEntityNameStrings('question', 'questions');
+
+        // Fix #2
+        // $this->crud->enableAjaxTable();
 
         /*
 		|--------------------------------------------------------------------------
@@ -99,7 +103,7 @@ $this->crud->addField([  // Select2
 'model' => "App\Models\Question_type" // foreign key model
 ]);
 
-
+//TODO:: Fix viewing the correct father.
 $this->crud->addColumn([
 // 1-n relationship
 'label' => "Parent", // Table column heading

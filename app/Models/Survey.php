@@ -39,6 +39,11 @@ class Survey extends Model
         return $this->hasMany('App\Models\Question');
     }
 
+    public function answers()
+    {
+        return $this->hasMany('App\Models\Answer');
+    }
+
     /*
 	|--------------------------------------------------------------------------
 	| RELATIONS
