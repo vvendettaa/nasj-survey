@@ -25,7 +25,12 @@ class QuestionRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
     public function rules()
     {
         return [
-            // 'name' => 'required|min:5|max:255'
+            'survey_id' => 'required|integer',
+            'question_section_id' => 'required|integer',
+            'question_type_id' => 'required|integer',
+            'parent_id' => 'integer|nullable',
+            'question' => 'required',
+            'answer' => 'required|array'         
         ];
     }
 
