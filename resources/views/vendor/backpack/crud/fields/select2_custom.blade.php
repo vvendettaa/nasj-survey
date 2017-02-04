@@ -7,7 +7,9 @@
         @include('crud::inc.field_attributes', ['default_class' =>  'form-control select2'])
     	>
 
-
+      @if(isset($field['allow_empty']))
+        <option value=""> - </option>
+      @endif
 
 	    	@if (isset($field['model']))
 	    		@foreach ($field['model']::all() as $connected_entity_entry)

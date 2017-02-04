@@ -35,4 +35,5 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin']], 
     CRUD::resource('question', 'Admin\QuestionCrudController');
 
     CRUD::resource('employee', 'Admin\EmployeeCrudController');
+    CRUD::resource('directory_import', 'Admin\Directory_importCrudController');
 });

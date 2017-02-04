@@ -26,7 +26,7 @@ return array(
     |    ]
     */
     'disks' => [
-
+    
     ],
 
     /*
@@ -39,8 +39,8 @@ return array(
     */
 
     'route' => [
-        'prefix' => 'elfinder',
-        'middleware' => 'replace-this-with-your-middleware', //Set to null to disable middleware filter
+        'prefix' => '',
+        'middleware' => [ 'web'], //Set to null to disable middleware filter
     ],
 
     /*
@@ -77,7 +77,7 @@ return array(
     */
 
     'options' => array(),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Root Options

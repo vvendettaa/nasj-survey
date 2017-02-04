@@ -103,7 +103,7 @@ $this->crud->addField([  // Select2
 'model' => "App\Models\Question_type" // foreign key model
 ]);
 
-//TODO:: Fix viewing the correct father.
+
 $this->crud->addColumn([
 // 1-n relationship
 'label' => "Parent", // Table column heading
@@ -123,7 +123,8 @@ $this->crud->addField([  // Select2
 'attributes' => [
   'id' => 'parent_sel'
 ],
-'model' => "App\Models\Question" // foreign key model
+'model' => "App\Models\Question", // foreign key model
+'allow_empty' => true
 ]);
 //TODO::Add where for only parent questions.
 
@@ -241,6 +242,9 @@ $this->crud->addField([
 	{
         //dd(array_filter($request->input('answer')));
         $request->request->set('answer', json_encode(array_filter($request->input('answer'))));
+        if(empty($request->input('parent_id')) || $request->input('question_type_id') != '6'){
+            $request->request->set('parent_id', '0');
+        }
 		// your additional operations before save here
         $redirect_location = parent::storeCrud($request);
         // your additional operations after save here

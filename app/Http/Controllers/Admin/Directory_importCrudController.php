@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
-use App\Http\Requests\Question_sectionRequest as StoreRequest;
-use App\Http\Requests\Question_sectionRequest as UpdateRequest;
+use App\Http\Requests\Directory_importRequest as StoreRequest;
+use App\Http\Requests\Directory_importRequest as UpdateRequest;
 
-class Question_sectionCrudController extends CrudController
+use App\Jobs\ImportDirectory;
+
+class Directory_importCrudController extends CrudController
 {
 
     public function setUp()
@@ -19,9 +21,9 @@ class Question_sectionCrudController extends CrudController
 		| BASIC CRUD INFORMATION
 		|--------------------------------------------------------------------------
 		*/
-        $this->crud->setModel("App\Models\Question_section");
-        $this->crud->setRoute("admin/question_section");
-        $this->crud->setEntityNameStrings('question section', 'question sections');
+        $this->crud->setModel("App\Models\Directory_import");
+        $this->crud->setRoute("admin/directory_import");
+        $this->crud->setEntityNameStrings('directory_import', 'directory_imports');
 
         /*
 		|--------------------------------------------------------------------------
@@ -29,56 +31,17 @@ class Question_sectionCrudController extends CrudController
 		|--------------------------------------------------------------------------
 		*/
 
-
-
         $this->crud->setFromDb();
 
-        $this->crud->removeColumns(['survey_id', 'parent_id']);
+        $this->crud->removeFields(['user_id', 'path']);
+        $this->crud->removeColumns(['path']);
 
-        $this->crud->addColumn([
-         // 1-n relationship
-         'label' => "Survey", // Table column heading
-         'type' => "select",
-         'name' => 'survey', // the column that contains the ID of that connected entity;
-         'entity' => 'survey', // the method that defines the relationship in your Model
-         'attribute' => "name", // foreign key attribute that is shown to user
-         'model' => "App\Models\Survey", // foreign key model
-      ]);
-
-        $this->crud->addField([  // Select2
-           'label' => "Survey",
-           'type' => 'select2_custom',
-           'name' => 'survey_id', // the db column for the foreign key
-           'entity' => 'survey', // the method that defines the relationship in your Model
-           'attribute' => 'name', // foreign key attribute that is shown to user
-           'attributes' => [
-             'id' => 'survey_sel'
-           ],
-           'model' => "App\Models\Survey" // foreign key model
-        ]);
-
-        $this->crud->addColumn([
-        // 1-n relationship
-        'label' => "Parent", // Table column heading
-        'type' => "select",
-        'name' => 'parent', // the column that contains the ID of that connected entity;
-        'entity' => 'parent', // the method that defines the relationship in your Model
-        'attribute' => "name", // foreign key attribute that is shown to user
-        'model' => "App\Models\Question_section", // foreign key model
-        ]);
-
-        $this->crud->addField([  // Select2
-        'label' => "Parent",
-        'type' => 'select2_custom',
-        'name' => 'parent_id', // the db column for the foreign key
-        'entity' => 'parent', // the method that defines the relationship in your Model
-        'attribute' => 'name', // foreign key attribute that is shown to user
-        'attributes' => [
-          'id' => 'parent_sel'
-        ],
-        'model' => "App\Models\Question_section", // foreign key model
-        'allow_empty' => true
-        ]);
+        $this->crud->addField([   // Browse
+    'name' => 'name',
+    'label' => 'File',
+    'type' => 'browse',
+    'hint' => 'By adding an Excel file you will trigger the import. Please make sure that your file follow this <a href="' . url("public/directoryTemplate.xlsx") . '">template</a>'
+]);
 
         // ------ CRUD FIELDS
         // $this->crud->addField($options, 'update/create/both');
@@ -147,14 +110,18 @@ class Question_sectionCrudController extends CrudController
 
 	public function store(StoreRequest $request)
 	{
-        if(empty($request->input('parent_id'))){
-            $request->request->set('parent_id', '0');
-        }
 
+        // $this->import($request->input('name'));
+
+
+        $request->request->set('user_id', \Auth::user()->id);
+
+        // dd($request->input());
 		// your additional operations before save here
         $redirect_location = parent::storeCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
+        dispatch(new ImportDirectory($this->crud->entry));
         return $redirect_location;
 	}
 
@@ -166,4 +133,8 @@ class Question_sectionCrudController extends CrudController
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;
 	}
+
+  private function import($name){
+
+  }
 }

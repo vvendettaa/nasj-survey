@@ -48,7 +48,7 @@ class Question extends Model
 
     //each question might have one parent
   public function parent() {
-    return $this->hasOne(static::class, 'parent_id');
+    return $this->belongsTo(static::class, 'parent_id');
   }
 
   //each question might have multiple children
