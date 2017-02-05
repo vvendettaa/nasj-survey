@@ -11,6 +11,11 @@ use App\Http\Requests\DepartmentRequest as UpdateRequest;
 class DepartmentCrudController extends CrudController
 {
 
+    public function __construct()
+    {
+        $this->middleware('role:super_admin|admin');
+    }
+
     public function setUp()
     {
 

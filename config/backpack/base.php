@@ -25,7 +25,7 @@ return [
     'developer_link' => '',
 
     // Show powered by Laravel Backpack in the footer?
-    'show_powered_by' => true,
+    'show_powered_by' => false,
 
     // The AdminLTE skin. Affects menu color and primary/secondary colors used throughout the application.
     'skin' => 'skin-purple',
@@ -47,7 +47,8 @@ return [
     |
     */
 
-    'registration_open' => (env('APP_ENV') == 'local') ? true : false,
+    // 'registration_open' => (env('APP_ENV') == 'local') ? true : false,
+    'registration_ope' => false,
 
     /*
     |--------------------------------------------------------------------------

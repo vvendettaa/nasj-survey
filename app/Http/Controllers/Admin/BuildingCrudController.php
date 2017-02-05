@@ -8,8 +8,16 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use App\Http\Requests\BuildingRequest as StoreRequest;
 use App\Http\Requests\BuildingRequest as UpdateRequest;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 class BuildingCrudController extends CrudController
 {
+  use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->middleware('role:super_admin|admin');
+    }
 
     public function setUp()
     {

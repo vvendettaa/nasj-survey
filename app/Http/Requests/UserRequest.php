@@ -27,7 +27,7 @@ class UserRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
         return [
             'name' => 'required|min:2|max:255',
             'email' => 'required|email',
-            'role_id' => 'required|integer'
+            'roles' => 'required'
         ];
     }
 

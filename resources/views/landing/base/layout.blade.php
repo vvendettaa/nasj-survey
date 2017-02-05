@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <title>
-      {{ isset($title) ? $title.' :: '.config('backpack.base.project_name').' Admin' : config('backpack.base.project_name').' Admin' }}
+      Nasj Survey
     </title>
 
     @yield('before_styles')
@@ -20,18 +20,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
-    <link rel="stylesheet" href="{{ asset('vendor/adminlte/') }}/dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="{{ asset('vendor/adminlte/') }}/dist/css/skins/_all-skins.min.css">
-
-    <link rel="stylesheet" href="{{ asset('vendor/adminlte/') }}/plugins/pace/pace.min.css">
-    <link rel="stylesheet" href="{{ asset('vendor/backpack/pnotify/pnotify.custom.min.css') }}">
-
-    <!-- BackPack Base CSS -->
-    <link rel="stylesheet" href="{{ asset('vendor/backpack/backpack.base.css') }}">
-
-    <link rel="stylesheet" href="{{ asset('css/bootstrap-treeview.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bootstrap-slider.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/journal-bootstrap.min.css') }}">
 
     @yield('after_styles')
 
@@ -42,35 +31,57 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="hold-transition {{ config('backpack.base.skin') }} sidebar-mini">
-    <!-- Site wrapper -->
-    <div class="wrapper">
+<body class="">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ url('') }}">Nasj Survey</a>
+      </div>
 
-      <header class="main-header">
-        <!-- Logo -->
-        <a href="{{ url('admin') }}" class="logo">
-          <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini">{!! config('backpack.base.logo_mini') !!}</span>
-          <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg">{!! config('backpack.base.logo_lg') !!}</span>
-        </a>
-        <!-- Header Navbar: style can be found in header.less -->
-        <nav class="navbar navbar-static-top" role="navigation">
-          <!-- Sidebar toggle button-->
-          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-            <span class="sr-only">{{ trans('backpack::base.toggle_navigation') }}</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          @role(['super_admin', 'admin', 'cxo', 'manager', 'sys'])
+            <li><a href="{{ url('admin') }}">Admin Panel</a></li>
+          @endrole
 
-          @include('backpack::inc.menu')
-        </nav>
-      </header>
+          @role(['super_admin', 'admin', 'cxo', 'manager', 'emp'])
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Start A Survey <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Survey 1</a></li>
+                <li><a href="#">Another action</a></li>
+              </ul>
+            </li>
+          @endrole
+          </ul>
+          @role(['super_admin', 'admin', 'cxo', 'manager', 'emp'])
+          <div class="nav navbar-text progress progress-striped" style="width: 40%;">
+                  <div class="progress-bar progress-bar-info" style="width: 30%;">Survey Progress: 30%</div>
+          </div>
+        @endrole
+        <ul class="nav navbar-nav navbar-right">
+          @if (Auth::guest())
+              <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/login') }}">{{ trans('backpack::base.login') }}</a></li>
+              @if (config('backpack.base.registration_open'))
+              <!-- <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/register') }}">{{ trans('backpack::base.register') }}</a></li> -->
+              @endif
+          @else
+              <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/logout') }}"><i class="fa fa-btn fa-sign-out"></i> {{ trans('backpack::base.logout') }}</a></li>
+          @endif
+        </ul>
+      </div>
+    </div>
+  </nav>
 
       <!-- =============================================== -->
 
-      @include('backpack::inc.sidebar')
+
 
       <!-- =============================================== -->
 
@@ -90,12 +101,7 @@
       <!-- /.content-wrapper -->
 
       <footer class="main-footer">
-        @if (config('backpack.base.show_powered_by'))
-            <div class="pull-right hidden-xs">
-              {{ trans('backpack::base.powered_by') }} <a target="_blank" href="http://laravelbackpack.com">Laravel BackPack</a>
-            </div>
-        @endif
-        {{ trans('backpack::base.handcrafted_by') }} <a target="_blank" href="{{ config('backpack.base.developer_link') }}">{{ config('backpack.base.developer_name') }}</a>.
+
       </footer>
     </div>
     <!-- ./wrapper -->
@@ -111,9 +117,7 @@
     <script src="{{ asset('vendor/adminlte') }}/plugins/pace/pace.min.js"></script>
     <script src="{{ asset('vendor/adminlte') }}/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="{{ asset('vendor/adminlte') }}/plugins/fastclick/fastclick.js"></script>
-    <script src="{{ asset('vendor/adminlte') }}/dist/js/app.min.js"></script>
-    <script src="{{ asset('js/bootstrap-treeview.js') }}"></script>
-    <script src="{{ asset('js/bootstrap-slider.js') }}"></script>
+
 
     <!-- page script -->
     <script type="text/javascript">
@@ -137,12 +141,8 @@
         });
     </script>
 
-    @include('backpack::inc.alerts')
 
     @yield('after_scripts')
-
-    <!-- JavaScripts -->
-    {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 
     <script>
 

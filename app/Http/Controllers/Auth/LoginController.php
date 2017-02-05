@@ -31,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/admin/dashboard';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -49,7 +49,7 @@ class LoginController extends Controller
         $this->loginPath = '/login';
 
         // Redirect here after successful login.
-        $this->redirectTo = 'admin/dashboard';
+        $this->redirectTo = '/';
 
         // Redirect here after logout.
         $this->redirectAfterLogout = '/';

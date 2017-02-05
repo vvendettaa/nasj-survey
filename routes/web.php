@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing.home');
 });
 
 Route::get('/import', ['as' => 'import', 'uses' => 'Admin\ImportController@index']);
@@ -25,11 +25,15 @@ Route::post('admin/test-view/employees', ['as' => 'get-tree-employees', 'uses' =
 Route::auth();
 Route::get('logout', 'Auth\LoginController@logout');
 
-Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin']], function() {
-    Route::get('/', 'Admin\AdminController@redirect');
-    Route::get('/dashboard', 'Admin\AdminController@dashboard');
+Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin|cxo|manager|sys']], function() {
+  Route::get('/', 'Admin\AdminController@index');
+});
 
-    CRUD::resource('user', 'Admin\UserCrudController');
+Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin|cxo|manager']], function() {
+    Route::get('/dashboard', 'Admin\AdminController@dashboard');
+});
+
+Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin']], function() {
     CRUD::resource('survey', 'Admin\SurveyCrudController');
     CRUD::resource('question_section', 'Admin\Question_sectionCrudController');
     CRUD::resource('question', 'Admin\QuestionCrudController');
@@ -37,4 +41,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin']], 
     CRUD::resource('employee', 'Admin\EmployeeCrudController');
     CRUD::resource('directory_import', 'Admin\Directory_importCrudController');
     CRUD::resource('question_import', 'Admin\Question_importCrudController');
+});
+
+Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin|sys']], function() {
+    CRUD::resource('user', 'Admin\UserCrudController');
 });
