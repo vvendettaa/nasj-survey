@@ -25,7 +25,7 @@ class Directory_importRequest extends \Backpack\CRUD\app\Http\Requests\CrudReque
     public function rules()
     {
         return [
-            // 'name' => 'required|min:5|max:255'
+            'name' => 'required|min:2|max:255'
         ];
     }
 

@@ -23,6 +23,8 @@ class Question_sectionCrudController extends CrudController
         $this->crud->setRoute("admin/question_section");
         $this->crud->setEntityNameStrings('question section', 'question sections');
 
+        $this->crud->enableAjaxTable();
+
         /*
 		|--------------------------------------------------------------------------
 		| BASIC CRUD INFORMATION
@@ -39,7 +41,7 @@ class Question_sectionCrudController extends CrudController
          // 1-n relationship
          'label' => "Survey", // Table column heading
          'type' => "select",
-         'name' => 'survey', // the column that contains the ID of that connected entity;
+         'name' => 'survey_id', // the column that contains the ID of that connected entity;
          'entity' => 'survey', // the method that defines the relationship in your Model
          'attribute' => "name", // foreign key attribute that is shown to user
          'model' => "App\Models\Survey", // foreign key model
@@ -61,7 +63,7 @@ class Question_sectionCrudController extends CrudController
         // 1-n relationship
         'label' => "Parent", // Table column heading
         'type' => "select",
-        'name' => 'parent', // the column that contains the ID of that connected entity;
+        'name' => 'parent_id', // the column that contains the ID of that connected entity;
         'entity' => 'parent', // the method that defines the relationship in your Model
         'attribute' => "name", // foreign key attribute that is shown to user
         'model' => "App\Models\Question_section", // foreign key model

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
 
-class EmployeeRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
+class Question_importRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,13 +26,7 @@ class EmployeeRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
     {
         return [
             'name' => 'required|min:2|max:255',
-            'department_id' => 'required|integer',
-            'building_id' => 'required|integer',
-            'project_id' => 'integer|nullable',
-            'gender' => 'string|nullable',
-            'value_system' => 'string|nullable',
-            'csi' => 'string|nullable',
-            'skills' => 'string|nullable'
+            'survey_id' => 'required|integer'
         ];
     }
 

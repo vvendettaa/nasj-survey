@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
-use App\Http\Requests\Directory_importRequest as StoreRequest;
-use App\Http\Requests\Directory_importRequest as UpdateRequest;
+use App\Http\Requests\Question_importRequest as StoreRequest;
+use App\Http\Requests\Question_importRequest as UpdateRequest;
 
-use App\Jobs\ImportDirectory;
+use App\Jobs\ImportQuestion;
 
-class Directory_importCrudController extends CrudController
+class Question_importCrudController extends CrudController
 {
 
     public function setUp()
@@ -21,9 +21,9 @@ class Directory_importCrudController extends CrudController
 		| BASIC CRUD INFORMATION
 		|--------------------------------------------------------------------------
 		*/
-        $this->crud->setModel("App\Models\Directory_import");
-        $this->crud->setRoute("admin/directory_import");
-        $this->crud->setEntityNameStrings('Directory Import', 'Directory Imports');
+        $this->crud->setModel("App\Models\Question_import");
+        $this->crud->setRoute("admin/question_import");
+        $this->crud->setEntityNameStrings('Question Import', 'Question Imports');
 
         $this->crud->enableAjaxTable();
 
@@ -35,31 +35,53 @@ class Directory_importCrudController extends CrudController
 
         $this->crud->setFromDb();
 
-        $this->crud->removeFields(['user_id', 'path', 'imported']);
-        $this->crud->removeColumns(['path', 'user_id']);
+        $this->crud->removeFields(['user_id', 'path', 'imported', 'survey_id']);
+        $this->crud->removeColumns(['path', 'user_id', 'survey_id']);
 
         $this->crud->addField([   // Browse
             'name' => 'name',
             'label' => 'File',
             'type' => 'browse',
-            'hint' => 'By adding an Excel file you will trigger the import. Please make sure that your file follow this <a href="' . url("public/directoryTemplate.xlsx") . '">template</a>'
+            'hint' => 'By adding an Excel file you will trigger the import. Please make sure that your file follow this <a href="' . url("public/employeeTemplate.xlsx") . '">template</a>'
         ]);
 
         $this->crud->addColumn([
-            // 1-n relationship
-            'label' => "User", // Table column heading
-            'type' => "select",
-            'name' => 'user_id', // the column that contains the ID of that connected entity;
-            'entity' => 'user', // the method that defines the relationship in your Model
-            'attribute' => "name", // foreign key attribute that is shown to user
-            'model' => "App\Models\User", // foreign key model
+        // 1-n relationship
+        'label' => "User", // Table column heading
+        'type' => "select",
+        'name' => 'user_id', // the column that contains the ID of that connected entity;
+        'entity' => 'user', // the method that defines the relationship in your Model
+        'attribute' => "name", // foreign key attribute that is shown to user
+        'model' => "App\Models\User", // foreign key model
         ]);
 
         $this->crud->addColumn([
-            'label' => 'Imported',
-            'type' => 'boolean',
-            'name' => 'imported'
+          'label' => 'Imported',
+          'type' => 'boolean',
+          'name' => 'imported'
         ]);
+
+        $this->crud->addColumn([
+             // 1-n relationship
+             'label' => "Survey", // Table column heading
+             'type' => "select",
+             'name' => 'survey_id', // the column that contains the ID of that connected entity;
+             'entity' => 'survey', // the method that defines the relationship in your Model
+             'attribute' => "name", // foreign key attribute that is shown to user
+             'model' => "App\Models\Survey", // foreign key model
+          ]);
+
+                  $this->crud->addField([  // Select2
+             'label' => "Survey",
+             'type' => 'select2_custom',
+             'name' => 'survey_id', // the db column for the foreign key
+             'entity' => 'survey', // the method that defines the relationship in your Model
+             'attribute' => 'name', // foreign key attribute that is shown to user
+             'attributes' => [
+               'id' => 'survey_sel'
+             ],
+             'model' => "App\Models\Survey" // foreign key model
+          ]);
 
         // ------ CRUD FIELDS
         // $this->crud->addField($options, 'update/create/both');
@@ -129,17 +151,12 @@ class Directory_importCrudController extends CrudController
 	public function store(StoreRequest $request)
 	{
 
-        // $this->import($request->input('name'));
-
-
         $request->request->set('user_id', \Auth::user()->id);
-
-        // dd($request->input());
 		// your additional operations before save here
         $redirect_location = parent::storeCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
-        dispatch(new ImportDirectory($this->crud->entry));
+        dispatch(new ImportQuestion($this->crud->entry));
         return $redirect_location;
 	}
 
@@ -151,8 +168,4 @@ class Directory_importCrudController extends CrudController
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;
 	}
-
-  private function import($name){
-
-  }
 }

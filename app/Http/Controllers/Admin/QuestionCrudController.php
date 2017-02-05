@@ -24,8 +24,7 @@ class QuestionCrudController extends CrudController
         $this->crud->setRoute("admin/question");
         $this->crud->setEntityNameStrings('question', 'questions');
 
-        // Fix #2
-        // $this->crud->enableAjaxTable();
+        $this->crud->enableAjaxTable();
 
         /*
 		|--------------------------------------------------------------------------
@@ -108,7 +107,7 @@ $this->crud->addColumn([
 // 1-n relationship
 'label' => "Parent", // Table column heading
 'type' => "select",
-'name' => 'parent', // the column that contains the ID of that connected entity;
+'name' => 'parent_id', // the column that contains the ID of that connected entity;
 'entity' => 'parent', // the method that defines the relationship in your Model
 'attribute' => "question", // foreign key attribute that is shown to user
 'model' => "App\Models\Question", // foreign key model

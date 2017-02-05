@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 
-class Directory_import extends Model
+class Question_import extends Model
 {
     use CrudTrait;
 
@@ -15,11 +15,11 @@ class Directory_import extends Model
 	|--------------------------------------------------------------------------
 	*/
 
-    protected $table = 'directory_imports';
+    protected $table = 'question_imports';
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $guarded = ['id'];
-    protected $fillable = ['user_id', 'name', 'imported'];
+    protected $fillable = ['user_id', 'survey_id', 'name', 'impoted'];
     // protected $hidden = [];
     // protected $dates = [];
 
@@ -32,6 +32,11 @@ class Directory_import extends Model
   public function user()
   {
       return $this->belongsTo('App\Models\User');
+  }
+
+  public function survey()
+  {
+      return $this->belongsTo('App\Models\Survey');
   }
 
     /*

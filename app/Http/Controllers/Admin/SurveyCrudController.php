@@ -23,6 +23,8 @@ class SurveyCrudController extends CrudController
         $this->crud->setRoute("admin/survey");
         $this->crud->setEntityNameStrings('survey', 'surveys');
 
+        $this->crud->enableAjaxTable();
+
         /*
 		|--------------------------------------------------------------------------
 		| BASIC CRUD INFORMATION
@@ -31,17 +33,20 @@ class SurveyCrudController extends CrudController
 
         $this->crud->setFromDb();
 
-        $this->crud->setColumns(['name']);
-        $this->crud->addField([
-	'name' => 'name',
-	'label' => "Survey Name"
-	]);
-
-  $this->crud->setColumns(['description']);
-        $this->crud->addField([
-	'name' => 'description',
-	'label' => "Description"
-	]);
+  //       $this->crud->addColumns([
+  //         'name' => 'name',
+  //         'label' => 'Survey'
+  //       ]);
+  //       $this->crud->addField([
+	// 'name' => 'name',
+	// 'label' => "Survey Name"
+	// ]);
+  //
+  // $this->crud->addColumns(['description']);
+  //       $this->crud->addField([
+	// 'name' => 'description',
+	// 'label' => "Description"
+	// ]);
 
   //TODO:: set default time to start time and end time to  value="0000-00-00T00:00:00"
 

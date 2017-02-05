@@ -44,7 +44,7 @@ class ImportDirectory implements ShouldQueue
           "csi"
       ];
       //Log::info(print_r($this->di));
-      Log::info('Showing user profile for user: '.public_path($this->di->name));
+      Log::info('Importing directory file: '.public_path($this->di->name));
       // die(print_r(public_path($this->di->name)));
 
       \Excel::load(public_path($this->di->name), function ($reader) {
