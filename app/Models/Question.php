@@ -21,7 +21,7 @@ class Question extends Model
     protected $guarded = ['id'];
     protected $fillable = ['survey_id', 'question_section_id', 'question_type_id', 'parent_id', 'question', 'answer'];
     protected $casts = [
-        'answer' => 'json'
+        'answer' => 'array'
     ];
     // protected $hidden = [];
     // protected $dates = [];
@@ -78,6 +78,10 @@ class Question extends Model
 	| ACCESORS
 	|--------------------------------------------------------------------------
 	*/
+
+  // public function getAnswerAttribute($value) {
+  //       return json_decode($value);
+  //   }
 
     /*
 	|--------------------------------------------------------------------------

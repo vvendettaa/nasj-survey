@@ -32,6 +32,9 @@ class SurveyCrudController extends CrudController
 		*/
 
         $this->crud->setFromDb();
+        $this->crud->removeField('slug');
+        $this->crud->removeColumn('slug');
+
 
   //       $this->crud->addColumns([
   //         'name' => 'name',
@@ -136,8 +139,9 @@ class SurveyCrudController extends CrudController
 
 	public function store(StoreRequest $request)
 	{
+        $request->request->set('slug', str_slug($request->input('name'), '-'));
 		// your additional operations before save here
-        $redirect_location = parent::storeCrud();
+        $redirect_location = parent::storeCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;
@@ -145,8 +149,9 @@ class SurveyCrudController extends CrudController
 
 	public function update(UpdateRequest $request)
 	{
+        $request->request->set('slug', str_slug($request->input('name'), '-'));
 		// your additional operations before save here
-        $redirect_location = parent::updateCrud();
+        $redirect_location = parent::updateCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;

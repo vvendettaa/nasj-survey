@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/') }}/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
 
     <link rel="stylesheet" href="{{ asset('css/journal-bootstrap.min.css') }}">
 
@@ -32,8 +33,8 @@
     <![endif]-->
 </head>
 <body class="">
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
+  <div class="navbar navbar-default">
+    <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle navigation</span>
@@ -54,16 +55,20 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Start A Survey <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Survey 1</a></li>
-                <li><a href="#">Another action</a></li>
+                @foreach ($surveys AS $survey)
+                <li class="{{ $selected_survey->slug === $survey['slug'] ? "active" : "" }}"><a href="{{ url($survey['slug']) }}">{{ $survey['name']}}</a></li>
+                @endforeach
               </ul>
             </li>
           @endrole
           </ul>
           @role(['super_admin', 'admin', 'cxo', 'manager', 'emp'])
-          <div class="nav navbar-text progress progress-striped" style="width: 40%;">
-                  <div class="progress-bar progress-bar-info" style="width: 30%;">Survey Progress: 30%</div>
-          </div>
+          @if(!empty($selected_survey->name))
+            <div class="nav navbar-text progress progress-striped" style="width: 40%;">
+                    <div class="progress-bar progress-bar-info" style="width: {{ $progress }}%;"></div>
+                    <span class='text-center'>Survey Progress: {{ $progress }}%</span>
+            </div>
+          @endif
         @endrole
         <ul class="nav navbar-nav navbar-right">
           @if (Auth::guest())
@@ -77,7 +82,7 @@
         </ul>
       </div>
     </div>
-  </nav>
+  </div>
 
       <!-- =============================================== -->
 
@@ -85,8 +90,9 @@
 
       <!-- =============================================== -->
 
+      <div class="container-fluid">
       <!-- Content Wrapper. Contains page content -->
-      <div class="content-wrapper">
+      <div class="bs-docs-section clearfixr">
         <!-- Content Header (Page header) -->
          @yield('header')
 
@@ -99,11 +105,12 @@
         <!-- /.content -->
       </div>
       <!-- /.content-wrapper -->
+    </div>
 
       <footer class="main-footer">
 
       </footer>
-    </div>
+
     <!-- ./wrapper -->
 
 
@@ -131,14 +138,14 @@
                 }
             });
 
-        // Set active state on menu element
-        var current_url = "{{ url(Route::current()->getUri()) }}";
-        $("ul.sidebar-menu li a").each(function() {
-          if ($(this).attr('href').startsWith(current_url) || current_url.startsWith($(this).attr('href')))
-          {
-            $(this).parents('li').addClass('active');
-          }
-        });
+        // // Set active state on menu element
+        // var current_url = "{{ url(Route::current()->getUri()) }}";
+        // $("ul.sidebar-menu li a").each(function() {
+        //   if ($(this).attr('href').startsWith(current_url) || current_url.startsWith($(this).attr('href')))
+        //   {
+        //     $(this).parents('li').addClass('active');
+        //   }
+        // });
     </script>
 
 
@@ -147,112 +154,112 @@
     <script>
 
     // Starrr plugin (https://github.com/dobtco/starrr)
-    var __slice = [].slice;
-
-    (function($, window) {
-      var Starrr;
-
-      Starrr = (function() {
-        Starrr.prototype.defaults = {
-          rating: void 0,
-          numStars: 5,
-          change: function(e, value) {}
-        };
-
-        function Starrr($el, options) {
-          var i, _, _ref,
-            _this = this;
-
-          this.options = $.extend({}, this.defaults, options);
-          this.$el = $el;
-          _ref = this.defaults;
-          for (i in _ref) {
-            _ = _ref[i];
-            if (this.$el.data(i) != null) {
-              this.options[i] = this.$el.data(i);
-            }
-          }
-          this.createStars();
-          this.syncRating();
-          this.$el.on('mouseover.starrr', 'span', function(e) {
-            return _this.syncRating(_this.$el.find('span').index(e.currentTarget) + 1);
-          });
-          this.$el.on('mouseout.starrr', function() {
-            return _this.syncRating();
-          });
-          this.$el.on('click.starrr', 'span', function(e) {
-            return _this.setRating(_this.$el.find('span').index(e.currentTarget) + 1);
-          });
-          this.$el.on('starrr:change', this.options.change);
-        }
-
-        Starrr.prototype.createStars = function() {
-          var _i, _ref, _results;
-
-          _results = [];
-          for (_i = 1, _ref = this.options.numStars; 1 <= _ref ? _i <= _ref : _i >= _ref; 1 <= _ref ? _i++ : _i--) {
-            _results.push(this.$el.append("<span class='glyphicon .glyphicon-star-empty'></span>"));
-          }
-          return _results;
-        };
-
-        Starrr.prototype.setRating = function(rating) {
-          if (this.options.rating === rating) {
-            rating = void 0;
-          }
-          this.options.rating = rating;
-          this.syncRating();
-          return this.$el.trigger('starrr:change', rating);
-        };
-
-        Starrr.prototype.syncRating = function(rating) {
-          var i, _i, _j, _ref;
-
-          rating || (rating = this.options.rating);
-          if (rating) {
-            for (i = _i = 0, _ref = rating - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-              this.$el.find('span').eq(i).removeClass('glyphicon-star-empty').addClass('glyphicon-star');
-            }
-          }
-          if (rating && rating < 5) {
-            for (i = _j = rating; rating <= 4 ? _j <= 4 : _j >= 4; i = rating <= 4 ? ++_j : --_j) {
-              this.$el.find('span').eq(i).removeClass('glyphicon-star').addClass('glyphicon-star-empty');
-            }
-          }
-          if (!rating) {
-            return this.$el.find('span').removeClass('glyphicon-star').addClass('glyphicon-star-empty');
-          }
-        };
-
-        return Starrr;
-
-      })();
-      return $.fn.extend({
-        starrr: function() {
-          var args, option;
-
-          option = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-          return this.each(function() {
-            var data;
-
-            data = $(this).data('star-rating');
-            if (!data) {
-              $(this).data('star-rating', (data = new Starrr($(this), option)));
-            }
-            if (typeof option === 'string') {
-              return data[option].apply(data, args);
-            }
-          });
-        }
-      });
-    })(window.jQuery, window);
-
-
-
-    $(function() {
-      return $(".starrr").starrr();
-    });
-
+    // var __slice = [].slice;
+    //
+    // (function($, window) {
+    //   var Starrr;
+    //
+    //   Starrr = (function() {
+    //     Starrr.prototype.defaults = {
+    //       rating: void 0,
+    //       numStars: 5,
+    //       change: function(e, value) {}
+    //     };
+    //
+    //     function Starrr($el, options) {
+    //       var i, _, _ref,
+    //         _this = this;
+    //
+    //       this.options = $.extend({}, this.defaults, options);
+    //       this.$el = $el;
+    //       _ref = this.defaults;
+    //       for (i in _ref) {
+    //         _ = _ref[i];
+    //         if (this.$el.data(i) != null) {
+    //           this.options[i] = this.$el.data(i);
+    //         }
+    //       }
+    //       this.createStars();
+    //       this.syncRating();
+    //       this.$el.on('mouseover.starrr', 'span', function(e) {
+    //         return _this.syncRating(_this.$el.find('span').index(e.currentTarget) + 1);
+    //       });
+    //       this.$el.on('mouseout.starrr', function() {
+    //         return _this.syncRating();
+    //       });
+    //       this.$el.on('click.starrr', 'span', function(e) {
+    //         return _this.setRating(_this.$el.find('span').index(e.currentTarget) + 1);
+    //       });
+    //       this.$el.on('starrr:change', this.options.change);
+    //     }
+    //
+    //     Starrr.prototype.createStars = function() {
+    //       var _i, _ref, _results;
+    //
+    //       _results = [];
+    //       for (_i = 1, _ref = this.options.numStars; 1 <= _ref ? _i <= _ref : _i >= _ref; 1 <= _ref ? _i++ : _i--) {
+    //         _results.push(this.$el.append("<span class='glyphicon .glyphicon-star-empty'></span>"));
+    //       }
+    //       return _results;
+    //     };
+    //
+    //     Starrr.prototype.setRating = function(rating) {
+    //       if (this.options.rating === rating) {
+    //         rating = void 0;
+    //       }
+    //       this.options.rating = rating;
+    //       this.syncRating();
+    //       return this.$el.trigger('starrr:change', rating);
+    //     };
+    //
+    //     Starrr.prototype.syncRating = function(rating) {
+    //       var i, _i, _j, _ref;
+    //
+    //       rating || (rating = this.options.rating);
+    //       if (rating) {
+    //         for (i = _i = 0, _ref = rating - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    //           this.$el.find('span').eq(i).removeClass('glyphicon-star-empty').addClass('glyphicon-star');
+    //         }
+    //       }
+    //       if (rating && rating < 5) {
+    //         for (i = _j = rating; rating <= 4 ? _j <= 4 : _j >= 4; i = rating <= 4 ? ++_j : --_j) {
+    //           this.$el.find('span').eq(i).removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+    //         }
+    //       }
+    //       if (!rating) {
+    //         return this.$el.find('span').removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+    //       }
+    //     };
+    //
+    //     return Starrr;
+    //
+    //   })();
+    //   return $.fn.extend({
+    //     starrr: function() {
+    //       var args, option;
+    //
+    //       option = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    //       return this.each(function() {
+    //         var data;
+    //
+    //         data = $(this).data('star-rating');
+    //         if (!data) {
+    //           $(this).data('star-rating', (data = new Starrr($(this), option)));
+    //         }
+    //         if (typeof option === 'string') {
+    //           return data[option].apply(data, args);
+    //         }
+    //       });
+    //     }
+    //   });
+    // })(window.jQuery, window);
+    //
+    //
+    //
+    // $(function() {
+    //   return $(".starrr").starrr();
+    // });
+    //
 
 
 

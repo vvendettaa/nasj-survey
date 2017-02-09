@@ -11,11 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('landing.home');
-});
+Route::get('/', ['as' => 'landing page', 'uses' => 'Home\SurveyController@index']);
 
-Route::get('/import', ['as' => 'import', 'uses' => 'Admin\ImportController@index']);
+Route::group(['middleware' => ['role:super_admin|admin|cxo|manager|emp|sys']], function(){
+  Route::get('/{slug}', ['as' => 'survey page', 'uses' => 'Home\SurveyController@getSurvey']);
+  Route::post('/getquestions', ['as' => 'ajax getquestions', 'uses' => 'Home\SurveyController@getQuestions']);
+  Route::post('/savesection', ['as' => 'ajax savesection', 'uses' => 'Home\SurveyController@saveSection']);
+});
 
 Route::get('admin/test-view', ['as' => 'test-view', 'uses' => 'Admin\EmployeeCrudController@view_test']);
 Route::get('admin/test-view/employees', ['as' => 'get-tree-employees', 'uses' => 'Admin\EmployeeCrudController@get_employees']);

@@ -19,8 +19,8 @@ class Survey extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'description', 'start_time', 'end_time'];
-    // protected $hidden = [];
+    protected $fillable = ['name', 'description', 'start_time', 'end_time', 'slug'];
+    protected $hidden = [];
     // protected $dates = [];
 
     /*
@@ -28,27 +28,33 @@ class Survey extends Model
 	| FUNCTIONS
 	|--------------------------------------------------------------------------
 	*/
+  public static function create(array $attributes = [])
+  {
+    $attributes['slug'] = str_slug($attributes['name'], '-');
+    return parent::create($attributes);
+  }
 
-    public function question_sections()
-    {
-        return $this->hasMany('App\Models\Question_section');
-    }
-
-    public function questions()
-    {
-        return $this->hasMany('App\Models\Question');
-    }
-
-    public function answers()
-    {
-        return $this->hasMany('App\Models\Answer');
-    }
 
     /*
 	|--------------------------------------------------------------------------
 	| RELATIONS
 	|--------------------------------------------------------------------------
 	*/
+
+  public function question_sections()
+  {
+      return $this->hasMany('App\Models\Question_section');
+  }
+
+  public function questions()
+  {
+      return $this->hasMany('App\Models\Question');
+  }
+
+  public function answers()
+  {
+      return $this->hasMany('App\Models\Answer');
+  }
 
     /*
 	|--------------------------------------------------------------------------
