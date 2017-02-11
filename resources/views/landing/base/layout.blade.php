@@ -34,7 +34,7 @@
 </head>
 <body class="">
   <div class="navbar navbar-default">
-    <div class="container">
+    <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle navigation</span>
@@ -56,7 +56,7 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Start A Survey <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 @foreach ($surveys AS $survey)
-                <li class="{{ $selected_survey->slug === $survey['slug'] ? "active" : "" }}"><a href="{{ url($survey['slug']) }}">{{ $survey['name']}}</a></li>
+                <li class="{{ $selected_survey->slug === $survey['slug'] ? "active" : "" }}"><a href="{{ url('s/'.$survey['slug']) }}">{{ $survey['name']}}</a></li>
                 @endforeach
               </ul>
             </li>
@@ -64,9 +64,13 @@
           </ul>
           @role(['super_admin', 'admin', 'cxo', 'manager', 'emp'])
           @if(!empty($selected_survey->name))
-            <div class="nav navbar-text progress progress-striped" style="width: 40%;">
+          <!-- <span class='nav navbar-text' style="">Survey Progress: {{ $progress }}%</span> -->
+          <!-- <span class='nav navbar-text' >Survey Progress: </span> -->
+            <div class="nav navbar-text progress progress-striped" style="width: 40%;" id="progress">
+
                     <div class="progress-bar progress-bar-info" style="width: {{ $progress }}%;"></div>
-                    <span class='text-center'>Survey Progress: {{ $progress }}%</span>
+                    <span class="" style="padding-right: 240px">Progress: {{ $progress }}%</span>
+
             </div>
           @endif
         @endrole

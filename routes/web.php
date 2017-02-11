@@ -14,9 +14,11 @@
 Route::get('/', ['as' => 'landing page', 'uses' => 'Home\SurveyController@index']);
 
 Route::group(['middleware' => ['role:super_admin|admin|cxo|manager|emp|sys']], function(){
-  Route::get('/{slug}', ['as' => 'survey page', 'uses' => 'Home\SurveyController@getSurvey']);
-  Route::post('/getquestions', ['as' => 'ajax getquestions', 'uses' => 'Home\SurveyController@getQuestions']);
-  Route::post('/savesection', ['as' => 'ajax savesection', 'uses' => 'Home\SurveyController@saveSection']);
+  Route::get('/s/{slug}', ['as' => 'survey page', 'uses' => 'Home\SurveyController@getSurvey']);
+  Route::post('/s/getquestions', ['as' => 'ajax getquestions', 'uses' => 'Home\SurveyController@getQuestions']);
+  Route::post('/s/savesection', ['as' => 'ajax savesection', 'uses' => 'Home\SurveyController@saveSection']);
+  Route::post('/s/sectionprogress', ['as' => 'ajax sectionprogress', 'uses' => 'Home\SurveyController@getSectionProgress']);
+  Route::post('/s/progress', ['as' => 'ajax surveyprogress', 'uses' => 'Home\SurveyController@getSurveyProgress']);
 });
 
 Route::get('admin/test-view', ['as' => 'test-view', 'uses' => 'Admin\EmployeeCrudController@view_test']);

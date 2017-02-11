@@ -29,7 +29,7 @@ class SurveyController extends Controller
             $this->user_role = $this->user->roles()->get()[0];
 
             $this->data['surveys'] = Survey::where('start_time', '<=', date('Y-m-d H:i:s'))->where('end_time', '>', date('Y-m-d H:i:s'))->get()->toArray();
-            $this->data['selected_survey'] = new Survey();
+            $this->data['selected_survey'] = (session('selected_survey'))? session('selected_survey') : new Survey();
             // dd($request);
           } else{
             $this->user = false;
@@ -42,6 +42,7 @@ class SurveyController extends Controller
   }
 
   public function index($slug = ''){
+    $request->session()->forget('selected_survey');
 
     return view('landing.home', $this->data);
   }
@@ -49,6 +50,7 @@ class SurveyController extends Controller
   public function getSurvey($slug){
 
         $this->data['selected_survey'] = Survey::where('slug', $slug)->first();
+        session(['selected_survey' => $this->data['selected_survey']]);
         $this->data['question_sections'] = Question_section::
                               where('survey_id', $this->data['selected_survey']->id)
                               ->where('parent_id', '0')
@@ -79,9 +81,7 @@ class SurveyController extends Controller
           $query->where('user_id', $this->user->id);
         }]);
       })->with('questions')->with('questions.answers')->get()->toArray();
-      $this->data['answered_questions'] = Answer::where('user_id', $this->user->id)->whereHas('question', function($query) use($question_section_id){
-        $query->whereIn('question_section_id',Question_section::where('parent_id', $question_section_id)->get()->toArray());
-      })->count();
+
 
 
 
@@ -102,8 +102,9 @@ class SurveyController extends Controller
               <a class="collapsed" role="button" data-toggle="collapse" data-parent="#questions" href="#collapse-'.$section['id'].'" aria-expanded="false" aria-controls="collapse-'.$section['id'].'">
                 '.$section['name'].'
               </a>
-              <span class="label label-success pull-left">'.$answered_questions_section.'</span>
-              <span class="label label-default pull-left">'.count($section['questions']).'</span>
+              <span class="label label-default pull-left">
+                <span class="label label-success pull-left">'.$answered_questions_section.'</span><span class="label label-info pull-left">'.count($section['questions']).'</span>
+              </span>
             </h4>
           </div>
         </div>
@@ -115,7 +116,7 @@ class SurveyController extends Controller
             case '1':
             $this->data['results'] .= '<div class="col-md-12" style="margin-bottom:10px;">
                   <div class="form-group-lg">
-                    <label class="col-md-12 control-label"><strong>'.$question['question'].'</strong></label>
+                    <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
                     <div class="col-md-12">
                       ';
             $count = 0;
@@ -142,7 +143,7 @@ class SurveyController extends Controller
         $this->data['results'] .= '
         <div class="form-group" style="margin-top:20px;">
            <div class="col-md-8 col-md-offset-2">
-             <button type="button" class="btn btn-success col-md-12" onclick="saveSection('.$section['id'].')">Save</button>
+             <button type="button" class="btn btn-success col-md-12" onclick="saveSection('.$section['id'].', '.$question_section_id.')">Save</button>
            </div>
           </div>
             </form></div></div></div></div>';
@@ -164,13 +165,35 @@ class SurveyController extends Controller
     return 1;
   }
 
-  public function getSectionProgress()
+  public function getSectionProgress(Request $request)
   {
+        $data = [];
+        if(!empty($this->data['selected_survey']->id)){
+          $sections = Question_section::where('parent_id', 0)->where('survey_id', $this->data['selected_survey']->id)->get()->pluck('id')->toArray();
+          foreach ($sections as $question_section_id) {
+              $section_ids = Question_section::where('parent_id', $question_section_id)->get()->pluck('id')->toArray();
+              $answered = Answer::where('user_id', $this->user->id)->whereHas('question', function($query) use($section_ids){
+                $query->whereIn('question_section_id', $section_ids);
+              })->count();
+              $total = Question::whereIn('question_section_id', $section_ids)->count();
+              // dd(Question_section::where('parent_id', $question_section_id)->get()->pluck('id')->toArray());
+              // $this->data[$request->input('section_id')] = $answered . ' / ' . $total;
+              $data['progress-section-'.$question_section_id] = '<span class="label label-success">'.$answered.'</span>/<span class="label label-info">'.$total.'</span>';
+          }
+          return json_encode($data);
+    }
 
   }
 
   public function getSurveyProgress()
   {
+    if(!empty($this->data['selected_survey']->id)){
+      $progress = (int)(Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count() / Question::where('survey_id', $this->data['selected_survey']->id)->count() * 100);
+
+      $data = '<div class="progress-bar progress-bar-info" style="width: '.$progress.'%;"></div>
+          <span class="" style="padding-right: 240px">Progress: '.$progress.'%</span>';
+          return $data;
+      }
 
   }
 
