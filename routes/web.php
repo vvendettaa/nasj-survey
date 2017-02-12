@@ -12,6 +12,12 @@
 */
 
 Route::get('/', ['as' => 'landing page', 'uses' => 'Home\SurveyController@index']);
+Route::get('/test', function(){
+  return view('employee-tree');
+});
+Route::get('/test2', function(){
+  return view('special-child-question');
+});
 
 Route::group(['middleware' => ['role:super_admin|admin|cxo|manager|emp|sys']], function(){
   Route::get('/s/{slug}', ['as' => 'survey page', 'uses' => 'Home\SurveyController@getSurvey']);
@@ -19,6 +25,9 @@ Route::group(['middleware' => ['role:super_admin|admin|cxo|manager|emp|sys']], f
   Route::post('/s/savesection', ['as' => 'ajax savesection', 'uses' => 'Home\SurveyController@saveSection']);
   Route::post('/s/sectionprogress', ['as' => 'ajax sectionprogress', 'uses' => 'Home\SurveyController@getSectionProgress']);
   Route::post('/s/progress', ['as' => 'ajax surveyprogress', 'uses' => 'Home\SurveyController@getSurveyProgress']);
+  Route::post('/s/employees-directory', ['as' => 'ajax employee directory', 'uses' => 'Home\SurveyController@getEmployeeDirectory']);
+  Route::post('/s/employees-list', ['as' => 'ajax employee list', 'uses' => 'Home\SurveyController@getEmployeeList']);
+  Route::post('/s/question-panel', ['as' => 'ajax question panel', 'uses' => 'Home\SurveyController@getQuestionPanel']);
 });
 
 Route::get('admin/test-view', ['as' => 'test-view', 'uses' => 'Admin\EmployeeCrudController@view_test']);

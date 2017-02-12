@@ -20,8 +20,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
-
+    <link rel="stylesheet" href="{{ asset('vendor/adminlte/') }}/dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="{{ asset('css/journal-bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-slider.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/star-rating.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-treeview.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 
     @yield('after_styles')
 
@@ -128,6 +132,9 @@
     <script src="{{ asset('vendor/adminlte') }}/plugins/pace/pace.min.js"></script>
     <script src="{{ asset('vendor/adminlte') }}/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="{{ asset('vendor/adminlte') }}/plugins/fastclick/fastclick.js"></script>
+    <script src="{{ asset('js/bootstrap-slider.js') }}"></script>
+    <script src="{{ asset('js/star-rating.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-treeview.js') }}"></script>
 
 
     <!-- page script -->

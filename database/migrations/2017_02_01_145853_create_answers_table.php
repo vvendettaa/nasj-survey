@@ -18,7 +18,7 @@ class CreateAnswersTable extends Migration
             $table->integer('user_id');
             $table->integer('survey_id');
             $table->integer('question_id');
-            $table->integer('answer_value');
+            $table->string('answer_value')->nullable();
             $table->text('answer_text');
 
 

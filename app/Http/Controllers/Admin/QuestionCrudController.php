@@ -240,7 +240,8 @@ $this->crud->addField([
 	public function store(StoreRequest $request)
 	{
         //dd(array_filter($request->input('answer')));
-        $request->request->set('answer', json_encode(array_filter($request->input('answer'))));
+        $answer = json_encode(array_filter($request->input('answer')));
+        $request->request->set('answer', "$answer");
         if(empty($request->input('parent_id')) || $request->input('question_type_id') != '6'){
             $request->request->set('parent_id', '0');
         }
@@ -253,8 +254,13 @@ $this->crud->addField([
 
 	public function update(UpdateRequest $request)
 	{
+    $answer = json_encode(array_filter($request->input('answer')));
+    $request->request->set('answer', (string)$answer);
+    if(empty($request->input('parent_id')) || $request->input('question_type_id') != '6'){
+        $request->request->set('parent_id', '0');
+    }
 		// your additional operations before save here
-        $redirect_location = parent::updateCrud();
+        $redirect_location = parent::updateCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;

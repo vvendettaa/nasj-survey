@@ -10,6 +10,7 @@ use App\Models\Question;
 use App\Models\Question_type;
 use App\Models\Question_section;
 use App\Models\Answer;
+use App\Models\Employee;
 
 class SurveyController extends Controller
 {
@@ -42,7 +43,8 @@ class SurveyController extends Controller
   }
 
   public function index($slug = ''){
-    $request->session()->forget('selected_survey');
+    session(['selected_survey' => new Survey()]);
+    $this->data['selected_survey'] = session('selected_survey');
 
     return view('landing.home', $this->data);
   }
@@ -55,7 +57,13 @@ class SurveyController extends Controller
                               where('survey_id', $this->data['selected_survey']->id)
                               ->where('parent_id', '0')
                               ->get();
-        $this->data['progress'] = (int)(Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count() / Question::where('survey_id', $this->data['selected_survey']->id)->count() * 100);
+        $answered_c = (int)Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count();
+        $total = (int)Question::where('survey_id', $this->data['selected_survey']->id)->count();
+        if($total != 0){
+          $this->data['progress'] = (int)($answered_c / $total * 100);
+        } else{
+          $this->data['progress'] = 0;
+        }
 
 
         // $this->data['questions'] = Question::where('')
@@ -75,12 +83,14 @@ class SurveyController extends Controller
     //   }))->
     //   orderBy('question_section_id', 'ASC')->with('question_section')->get()->toArray();
 
-      $questions = Question_section::where('parent_id', $question_section_id)
+      $questions = Question_section::where('parent_id', $question_section_id)->orWhere('id', $question_section_id)
       ->whereHas('questions', function($query) {
         $query->with(['answers' => function($query) {
           $query->where('user_id', $this->user->id);
         }]);
-      })->with('questions')->with('questions.answers')->get()->toArray();
+      })->with(['questions' => function($query) {
+          $query->where('parent_id', '0');
+      }])->with('questions.answers')->get()->toArray();
 
 
 
@@ -113,27 +123,36 @@ class SurveyController extends Controller
         foreach($section['questions'] AS $question){
           $this->data['results'] .= '<div class="row">';
           switch ($question['question_type_id']) {
+            //multiple radio
             case '1':
-            $this->data['results'] .= '<div class="col-md-12" style="margin-bottom:10px;">
-                  <div class="form-group-lg">
-                    <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
-                    <div class="col-md-12">
-                      ';
-            $count = 0;
-              foreach(json_decode($question['answer']) AS $answer){
-                $checked = (isset($question['answers'][0]['answer_value']) && $count == $question['answers'][0]['answer_value'])? 'checked="checked"' : '';
-                $this->data['results'] .= '<div class="radio-inline"><label>
-                  <input type="radio" name="question_'.$question['id'].'" id="optionsRadios1" value="'.$answer.','.$count++.'" '.$checked.'>
-                  '.$answer.'
-                </label></div>';
-              }
-              $this->data['results'] .= '</div>
-                        </div>
-                      </div>';
+              $this->data['results'] .= $this->radio_question($question);
               break;
 
-            default:
-              # code...
+              //multiple checkbox
+              case '2':
+                $this->data['results'] .= $this->checkbox_question($question);
+              break;
+              //slider Number
+              case '3':
+                $this->data['results'] .= $this->slider_question($question);
+              break;
+              //slider rating
+              case '4':
+                $this->data['results'] .= $this->rating_question($question);
+              break;
+
+              //special question parent
+              case '5':
+                $this->data['results'] .= $this->special_question($question);
+              break;
+              //special question child
+              // case '6':
+              //
+              // break;
+
+              //case 7 and default textarea
+              default:
+                $this->data['results'] .= $this->textarea_question($question);
               break;
           }
           $this->data['results'] .= '
@@ -143,7 +162,8 @@ class SurveyController extends Controller
         $this->data['results'] .= '
         <div class="form-group" style="margin-top:20px;">
            <div class="col-md-8 col-md-offset-2">
-             <button type="button" class="btn btn-success col-md-12" onclick="saveSection('.$section['id'].', '.$question_section_id.')">Save</button>
+              <input type="hidden" name="section_id" value="'.$question_section_id.'" />
+             <button type="button" class="btn btn-success col-md-12" onclick="saveSection('.$section['id'].')">Save</button>
            </div>
           </div>
             </form></div></div></div></div>';
@@ -159,7 +179,20 @@ class SurveyController extends Controller
     $section = Question_section::where('id', $request->input('section_id'))->first();
     $request->request->remove('section_id');
     foreach ($request->input() as $key => $value) {
-      $v = explode(',',$value);
+      if(is_array($value)){
+        $tmp_0 = [];
+        $tmp_1 = [];
+        foreach ($value as $v) {
+          $tmp = explode(',', $v);
+          $tmp[1] = (isset($tmp[1]))? $tmp[1] : $tmp[0];
+          array_push($tmp_0, $tmp[0]);
+          array_push($tmp_1, $tmp[1]);
+        }
+        $v = [json_encode($tmp_0), json_encode($tmp_1)];
+      } else{
+        $v = explode(',',$value);
+      }
+
       Answer::updateOrCreate(['user_id' => $this->user->id, 'survey_id' => $section->survey_id, 'question_id' => substr($key, 9)] , ['answer_value' => $v[1], 'answer_text' => $v[0]]);
     }
     return 1;
@@ -195,6 +228,442 @@ class SurveyController extends Controller
           return $data;
       }
 
+  }
+
+  private function radio_question($question)
+  {
+    $results = '<div class="col-md-12" style="margin-bottom:10px;">
+          <div class="form-group-lg">
+            <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
+            <div class="col-md-12">
+              ';
+
+    $count = 0;
+    $answers_l = (is_array($question['answer']))? $question['answer'] : json_decode($question['answer']);
+      foreach($answers_l AS $answer){
+        $checked = (isset($question['answers'][0]['answer_value']) && (array_search((string)$count, json_decode($question['answers'][0]['answer_value'])) !== false))? 'checked="checked"' : '';
+        $results .= '<div class="radio-inline"><label>
+          <input type="radio" name="question_'.$question['id'].'[]" id="question_'.$question['id'].'_'.$count.'" value="'.$answer.','.$count++.'" '.$checked.'>
+          '.$answer.'
+        </label></div>';
+      }
+      $results .= '</div>
+                </div>
+              </div>';
+
+     return $results;
+  }
+
+  private function checkbox_question($question)
+  {
+    $results = '<div class="col-md-12" style="margin-bottom:10px;">
+          <div class="form-group-lg">
+            <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
+            <div class="col-md-12">
+              ';
+    $count = 0;
+    $answers_l = (is_array($question['answer']))? $question['answer'] : json_decode($question['answer']);
+      foreach($answers_l AS $answer){
+        $checked = (isset($question['answers'][0]['answer_value']) && (array_search($count, json_decode($question['answers'][0]['answer_value'])) !== false))? 'checked="checked"' : '';
+        $results .= '<div class="checkbox-inline"><label>
+          <input type="checkbox" name="question_'.$question['id'].'[]" id="question_'.$question['id'].'_'.$count.'" value="'.$answer.','.$count++.'" '.$checked.'>
+          '.$answer.'
+        </label></div>';
+      }
+      $results .= '</div>
+                </div>
+              </div>';
+
+      return $results;
+
+  }
+
+  private function slider_question($question)
+  {
+
+    $results = '<div class="col-md-12" style="margin-bottom:10px;">
+          <div class="form-group-lg">
+            <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
+            <div class="col-md-12">
+              ';
+    $count = 0;
+    $answers_l = (is_array($question['answer']))? $question['answer'] : json_decode($question['answer']);
+      foreach($answers_l AS $answer){
+        $a = explode('-',$answer);
+        $value = (isset($question['answers'][0]['answer_value']))? json_decode($question['answers'][0]['answer_value'])[0] : '';
+        $results .= '
+          <input class="form-control slider_q" data-slider-id="question_'.$question['id'].'_'.$count.'Slider" type="text" data-slider-min="'.$a[0].'" data-slider-step="1" data-slider-max="'.$a[1].'" name="question_'.$question['id'].'[]" id="question_'.$question['id'].'_'.$count.'" data-slider-value="'.$value.'" />
+        ';
+      }
+      $results .= '</div>
+                </div>
+              </div>';
+      return $results;
+  }
+
+  private function rating_question($question)
+  {
+    $results = '<div class="col-md-12" style="margin-bottom:10px;">
+          <div class="form-group-lg">
+            <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
+            <div class="col-md-12">
+              ';
+    $count = 0;
+    $answers_l = (is_array($question['answer']))? $question['answer'] : json_decode($question['answer']);
+      foreach($answers_l AS $answer){
+        $a = explode('-',$answer);
+        $value = (isset($question['answers'][0]['answer_value']))? json_decode($question['answers'][0]['answer_value'])[0] : '';
+        $results .= '
+          <input class="form-control kv-gly-star rating-loading" data-slider-id="question_'.$question['id'].'_'.$count.'Slider" type="text" dir="rtl" data-size="xs" name="question_'.$question['id'].'[]" id="question_'.$question['id'].'_'.$count.'" title="" value="'.$value.'" />
+        ';
+      }
+      $results .= '</div>
+                </div>
+              </div>';
+      return $results;
+  }
+
+  private function special_question($question)
+  {
+    $results = '<input type="hidden" class="special-question-exsists" value="'.$question['id'].'" />
+    <div class="col-md-12" style="margin-bottom:10px;">
+          <div class="form-group-lg">
+            <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
+            </div>
+            </div>
+    <div class="col-md-12 flip" style="margin-bottom:10px;">
+        <div class="panel panel-default">
+            <div class="panel-heading with-border">
+                <div class="panel-title"><a onclick="special_question_init('.$question['id'].')" style="color: #e22620;" class="collapsed" role="button" data-toggle="collapse" data-parent="#questions" href="#collapse-'.$question['id'].'" aria-expanded="false" aria-controls="collapse-'.$question['id'].'">Answer</a></div>
+            </div>
+
+            <div id="collapse-'.$question['id'].'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-'.$question['id'].'">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-lg-2 flip tree" id="tree-'.$question['id'].'">
+
+                </div>
+                <div class="col-md-3">
+          <!-- USERS LIST -->
+          <div class="panel panel-danger">
+            <div class="panel-heading with-border">
+              <h3 class="panel-title">Members</h3>
+            </div>
+            <div class="panel-body no-padding emp-list" id="members-'.$question['id'].'">
+
+            </div>
+            <div class="panel-footer text-center">
+              <!-- <a href="javascript:void(0)" class="uppercase">View All Members</a> -->
+            </div>
+            <!-- /.box-footer -->
+          </div>
+          <!--/.box -->
+        </div>
+        <div id="answers-'.$question['id'].'" class="special_question">
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+            ';
+
+            return $results;
+  }
+
+  private function textarea_question($question)
+  {
+    $results = '<div class="col-md-12" style="margin-bottom:10px;">
+          <div class="form-group-lg">
+            <label class="col-md-12 control-label"><strong> - '.$question['question'].'</strong></label>
+            <div class="col-md-12">
+              ';
+    $count = 0;
+    $answers_l = (is_array($question['answer']))? $question['answer'] : json_decode($question['answer']);
+      foreach($answers_l AS $answer){
+        // $a = explode('-',$answer);
+        $value = (isset($question['answers'][0]['answer_value']))? json_decode($question['answers'][0]['answer_value'])[0] : '';
+        $results .= '
+          <textarea class="form-control" rows="5" name="question_'.$question['id'].'[]" id="question_'.$question['id'].'_'.$count.'">'.$value.'</textarea>
+        ';
+      }
+      $results .= '</div>
+                </div>
+              </div>';
+      return $results;
+  }
+
+  private function child_special_question($question)
+  {
+    $results = '
+    <div class="panel box box-danger">
+      <div class="box-header with-border">
+        <h4 class="box-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="collapsed" aria-expanded="false">
+            nalqubali | GPO | Building Alfa
+          </a>
+        </h4>
+        <div class="box-tools pull-right">
+
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          </button>
+          <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div id="collapseTwo" class="panel-collapse collapse" aria-expanded="false">
+        <div class="box-body">
+          <ul class="nav nav-tabs" id="myTabs">
+            <li role="presentation" class="active"><a data-toggle="tab" href="#home">Team work</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#menu1">Communication</a></li>
+          </ul>
+
+          <div class="tab-content">
+            <div id="home" class="tab-pane fade in active">
+              <div class="col-md-12">
+
+                <form role="form" class="">
+                  <div class="box-body">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Affecting Energy:</label>
+                      <p></p>
+                      <input id="ex1" class="form-control ex1" data-slider-id= type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">Talk Often</label>
+                      <div class="form-group">
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                            Option one
+                          </label>
+                        </div>
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                            Option two
+                          </label>
+                        </div>
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" >
+                            Option three
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">Long You know</label>
+                      <div class="form-group">
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                            Option one
+                          </label>
+                        </div>
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                            Option two
+                          </label>
+                        </div>
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" >
+                            Option three
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">Understands ...</label>
+                      <div class="form-group">
+                        <div class="checkbox-inline">
+                          <label>
+                            <input type="checkbox" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                            Option one
+                          </label>
+                        </div>
+                        <div class="checkbox-inline">
+                          <label>
+                            <input type="checkbox" name="optionsRadios" id="optionsRadios2" value="option2">
+                            Option two
+                          </label>
+                        </div>
+                        <div class="checkbox-inline">
+                          <label>
+                            <input type="checkbox" name="optionsRadios" id="optionsRadios3" value="option3" >
+                            Option three
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">Understands ...</label>
+                      <div class="form-group">
+                        <div class="checkbox-inline">
+                          <label>
+                            <input type="checkbox" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                            Option one
+                          </label>
+                        </div>
+                        <div class="checkbox-inline">
+                          <label>
+                            <input type="checkbox" name="optionsRadios" id="optionsRadios2" value="option2">
+                            Option two
+                          </label>
+                        </div>
+                        <div class="checkbox-inline">
+                          <label>
+                            <input type="checkbox" name="optionsRadios" id="optionsRadios3" value="option3" >
+                            Option three
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </div>
+                  <!-- /.box-body -->
+
+                  <div class="box-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div id="menu1" class="tab-pane fade">
+              <div class="col-md-12">
+
+                <form role="form" class="">
+                  <div class="box-body">
+
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">Turn for input?</label>
+                      <div class="form-group">
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                            Yes
+                          </label>
+                        </div>
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                            No
+                          </label>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">Communication with?</label>
+                      <div class="form-group">
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                            Yes
+                          </label>
+                        </div>
+                        <div class="radio-inline">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                            No
+                          </label>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Influential:</label>
+                      <p></p>
+                      <input id="ex1" class="form-control ex1" data-slider-id= type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
+                    </div>
+
+                    <div class="form-group inline" style="padding-right:40px;">
+                      <label for="exampleInputPassword1">Aspect 1</label>
+                      <div class="form-group inline">
+
+                      <div id="stars-existing" class="starrr" data-rating=></div>
+                    </div>
+                  </div>
+
+                    <div class="form-group inline">
+                      <label for="exampleInputPassword1">Aspect 2</label>
+                      <div class="form-group inline">
+
+
+    ';
+  }
+
+  public function getEmployeeDirectory(Request $request){
+    $e = Employee::select('name', 'department_id', 'project_id', 'building_id')->where('company_id', $this->user->company_id)->with('department')->with('project')->with('building')->with('skills')->orderBy('department_id')->orderBy('building_id')->get();
+    $e = $e->toArray();
+    $results = [];
+    $group_by = '';
+    $building = '';
+    $loop_group_counter = -1;
+
+    foreach($e AS $row){
+      if(empty($row['building']['name'])){ $row['building']['name'] = 'N/A';}
+      if(empty($group_by) || $group_by != $row['department']['name']){
+        $group_by = $row['department']['name'];
+        ++$loop_group_counter;
+        $building_loop = -1;
+        $results[$loop_group_counter] = ['text' => $group_by, 'id' => 'dep-'.$row['department']['id'], 'icon' => 'fa fa-fw fa-users', 'selectable' => false, 'state' => ['checked' => false], 'nodes' => array()];
+      }
+      if(empty($building) || $building != $row['building']['name'] || $building_loop == -1){
+        $building = $row['building']['name'];
+        ++$building_loop;
+        if(!isset($results[$loop_group_counter]['nodes'][$building_loop])){
+          $results[$loop_group_counter]['nodes'][$building_loop] = ['text' => $building, 'id' => $row['department']['id'].'-'.$row['building']['id'], 'icon' => 'fa fa-fw fa-building', 'nodes' => array()];
+        }
+      }
+      // $tmp = ['text' => $row['name'].' | '. $row['department']['name'] . '  |  '. $row['building']['name'], 'selectable' => true, 'icon' => 'fa fa-fw fa-user',  'state' => ['checked' => false],];
+      // array_push($results[$loop_group_counter]['nodes'], $tmp);
+      // array_push($results[$loop_group_counter]['nodes'][$building_loop]['nodes'], $tmp);
+
+
+    }
+    // return response()->json($results, 200, $headers);
+    echo json_encode($results);
+  }
+
+  public function getEmployeeList(Request $request){
+
+    $list_ids = ($request->input('list_id'))? explode('-', $request->input('list_id')) : null;
+    $question_id = ($request->input('question_id'))? $request->input('question_id') : '0';
+    if(!is_null($list_ids)){
+        $e = Employee::select('id', 'name', 'department_id', 'project_id', 'building_id')->where('company_id', $this->user->company_id)->where('department_id', $list_ids[0])->where('building_id', $list_ids[1])->with('department')->with('project')->with('building')->with('skills')->orderBy('department_id')->orderBy('building_id')->get();
+    } else{
+        $e = Employee::select('id', 'name', 'department_id', 'project_id', 'building_id')->where('company_id', $this->user->company_id)->with('department')->with('project')->with('building')->with('skills')->orderBy('department_id')->orderBy('building_id')->get();
+    }
+
+
+    $e = $e->toArray();
+    $results = '<ul class="users-list clearfix">';
+
+    foreach($e AS $row){
+      $results .= '<li class="col-md-4">
+        <img src="/vendor/adminlte/dist/img/default-50x50.gif"  alt="User Image">
+        <a class="users-list-name" id="emp-'.$row['id'].'" href="#" onclick="selectEmp('.$row['id'].','.$question_id.');">'.$row['name'].'</a>
+        <!-- <span class="users-list-date">Today</span> -->
+      </li>';
+    }
+    $results .= '</ul>';
+    // return response()->json($results, 200, $headers);
+    echo $results;
+  }
+
+
+  public function getQuestionPanel(Request $request)
+  {
+    
   }
 
 

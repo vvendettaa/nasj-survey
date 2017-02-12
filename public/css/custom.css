@@ -1,0 +1,9 @@
+.emp-list {
+  overflow-y: scroll;
+  overflow-x: visible;
+  max-height: 420px;
+}
+
+.users-list-name {
+  overflow: visible !important;
+}

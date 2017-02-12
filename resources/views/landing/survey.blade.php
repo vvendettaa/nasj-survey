@@ -34,6 +34,8 @@
 <script>
 $(document).ready(function(){
 
+  // init_slider_q();
+
   getSectionProgress();
 
   $('#question_section_tab a').click(function (e) {
@@ -47,17 +49,19 @@ $(document).ready(function(){
             //return data;
             // console.log(data);
             $(''+id).html(data);
+            init_slider_q();
         }
     });
   $(this).tab('show');
+  // init_slider_q();
 
-  console.log($(this).attr('href'));
+  // console.log($(this).attr('href'));
 });
 
 });
 
 function saveSection(section_id, sec){
-  var data = $("#section-form-"+section_id).serialize()+'&section_id='+section_id;
+  var data = serializePost("#section-form-"+section_id);
   console.log(data);
   $.ajax({
         type: "POST",
@@ -110,6 +114,103 @@ function getProgress(){
         }
     });
 }
+
+function serializePost(form) {
+    var data = {};
+    form = $(form).serializeArray();
+    for (var i = form.length; i--;) {
+        var name = form[i].name;
+        var value = form[i].value;
+        var index = name.indexOf('[]');
+        if (index > -1) {
+            name = name.substring(0, index);
+            if (!(name in data)) {
+                data[name] = [];
+            }
+            data[name].push(value);
+        }
+        else
+            data[name] = value;
+    }
+    return data;
+}
+
+function init_slider_q(){
+  // console.log('s');
+  $('.slider_q').slider({
+      	formatter: function(value) {
+      		return 'Current value: ' + value;
+      	}
+      });
+
+      $('.kv-gly-star').rating({
+          containerClass: 'is-star',
+          step: 1,
+          showCaption: false
+      });
+}
+
+function special_question_init(question_id){
+  $.ajax({
+            type: "POST",
+            url: 'employees-directory',
+            question_id: question_id,
+            data: {question_id: question_id},
+            success: function(data) {
+                //return data;
+                console.log(this.question_id);
+                drawTree(data, this.question_id);
+            }
+        });
+}
+
+function drawTree(data, question_id){
+    $('#tree-'+question_id).treeview({
+      data: data,
+      showIcon: true,
+      showCheckbox: true,
+      onNodeChecked: function(event, node) {
+          $('#checkable-output').prepend('<p class="pull-left">' + node.text + ' was checked</p>');
+      },
+      onNodeUnchecked: function (event, node) {
+          $('#checkable-output').prepend('<p>' + node.text + ' was unchecked</p>');
+      }
+    });
+    $('#tree-'+question_id).treeview('collapseAll', { silent: true });
+    $('#tree-'+question_id).on('nodeSelected', function(event, data) {
+        console.log(data);
+        $.ajax({
+                  type: "POST",
+                  url: 'employees-list',
+                  question_id: question_id,
+                  data: {list_id: data.id, question_id: question_id},
+                  success: function(data) {
+                      //return data;
+                      console.log(data);
+                      $('#members-'+question_id).html(data);
+                      // drawTree(data, this.question_id);
+                  }
+              });
+        console.log(parent);
+    });
+  }
+
+  function selectEmp(empId, quesId){
+    $.ajax({
+              type: "POST",
+              url: 'question-panel',
+              question_id: question_id,
+              data: {emp_id: empId, question_id: quesId},
+              success: function(data) {
+                  //return data;
+                  console.log(data);
+                  // $('#members-'+question_id).html(data);
+                  // drawTree(data, this.question_id);
+              }
+          });
+    console.log(parent);
+});
+  }
 
 </script>
 @endsection
