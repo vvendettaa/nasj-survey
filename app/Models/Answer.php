@@ -40,12 +40,17 @@ class Answer extends Model
      */
     protected $guarded = ['id'];
 
+
+    protected $attributes = [
+   'emp_id' => 0
+   ];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'survey_id', 'question_id', 'answer_value', 'answer_text'];
+    protected $fillable = ['user_id', 'survey_id', 'question_id', 'answer_value', 'answer_text', 'emp_id'];
 
     /**
      * The attributes that should be hidden for arrays
@@ -87,6 +92,11 @@ class Answer extends Model
     {
         return $this->belongsTo('App\Models\Question');
     }
+
+    public function employee()
+      {
+          return $this->belongsTo('App\Models\Employee');
+      }
 
     /*
 	|--------------------------------------------------------------------------

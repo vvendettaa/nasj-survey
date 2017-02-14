@@ -41,6 +41,11 @@ class Question extends Model
         return $this->belongsTo('App\Models\Question_section');
     }
 
+    public function question_sections()
+      {
+          return $this->hasMany('App\Models\Question_section');
+      }
+
   public function question_type()
     {
         return $this->belongsTo('App\Models\Question_type');

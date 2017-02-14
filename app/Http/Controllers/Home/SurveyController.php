@@ -663,7 +663,47 @@ class SurveyController extends Controller
 
   public function getQuestionPanel(Request $request)
   {
-    
+    $emp_id = ($request->input('emp_id')) ? $request->input('emp_id') : \App::abort(500, 'Something bad happened');
+    $question_id = ($request->input('question_id'))? $request->input('question_id') : \App::abort(500, 'Something bad happened');
+    $emp = Employee::where('id', $emp_id)->first()->toArray();
+    //the next two variables, have to combine them. Check performance.
+    $parent_question = Question::where('id', $question_id)->with('children')->first()->toArray();
+    $questions = Question::where('parent_id', $question_id)->get()->with(['answers' => function($query) {
+      $query->where('user_id', $this->user->id)->where('emp_id', $e->id);
+    }])->get()->toArray();
+
+  }
+
+
+
+  public function getQuestionlist(Request $request)
+  {
+    $emp_id = ($request->input('emp_id'))? $request->input('emp_id') : \App::abort(500, 'Something bad happened');
+    $question_id = ($request->input('question_id'))? $request->input('question_id') : \App::abort(500, 'Something bad happened');
+    $emp = Employee::where('id', $emp_id)->first()->toArray();
+    //the next two variables, have to combine them. Check performance.
+    $parent_question = Question::where('id', $question_id)->with('children')->first()->toArray();
+    $questions = Question::where('parent_id', $question_id)->get()->with(['answers' => function($query) {
+      $query->where('user_id', $this->user->id)->where('emp_id', $e->id);
+  }])->get()->toArray();
+
+    $results = '<div class="col-md-7"><div class="panel-group" id="questions" role="tablist" aria-multiselectable="true">';
+    $results .= '<div class="col-md-12 flip" style="margin-bottom:10px;">
+    <div class="panel panel-info">
+      <div class="panel-heading" role="tab" id="heading-q-'.$parent_question['id'].'-'.$emp['id'].'">
+      <div class="panel-title">
+        <h4>
+          <a class="collapsed" role="button" data-toggle="collapse" data-parent="#questions" href="#collapse-q-'.$parent_question['id'].'-'.$emp['id'].'" aria-expanded="false" aria-controls="collapse-'.$parent_question['id'].'-'.$emp['id'].'">
+            '.$emp['name'].'
+          </a>
+          <span class="label label-default pull-left">
+            <span class="label label-success pull-left">'.$answered_questions_section.'</span><span class="label label-info pull-left">'.count($section['questions']).'</span>
+          </span>
+        </h4>
+      </div>
+    </div>
+    <div id="collapse-'.$section['id'].'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-'.$section['id'].'">
+    <div class="panel-body"><form class="form-horizontal" role="form" id="section-form-'.$section['id'].'">';
   }
 
 

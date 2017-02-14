@@ -48,6 +48,10 @@ class Employee extends Model
       return $this->belongsToMany('App\Models\Skill');
     }
 
+    public function answers(){
+      return $this->hasMany('App\Models\Answer');
+    }
+
     /*
 	|--------------------------------------------------------------------------
 	| RELATIONS

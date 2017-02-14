@@ -7,8 +7,10 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AddCompanyIdFieldToUsers' => $baseDir . '/database/migrations/2017_01_29_142229_add_company_id_field_to_users.php',
+    'AddEmpIdFieldToAnswersTable' => $baseDir . '/database/migrations/2017_02_14_002032_add_emp_id_field_to_answers_table.php',
     'AddImportedColumnToDirectoryImports' => $baseDir . '/database/migrations/2017_02_04_185141_add_imported_column_to_directory_imports.php',
     'AddParentIdColumnToQuestionSections' => $baseDir . '/database/migrations/2017_02_04_113753_add_parent_id_column_to_question_sections.php',
+    'AddQuestionIdFieldToQuestionSectionsTable' => $baseDir . '/database/migrations/2017_02_14_001925_add_question_id_field_to_question_sections_table.php',
     'AddQuestionSectionIdFieldToQuestions' => $baseDir . '/database/migrations/2017_01_31_152444_add_question_section_id_field_to_questions.php',
     'AddQuestionSectionTable' => $baseDir . '/database/migrations/2017_01_31_141444_add_question_section_table.php',
     'AddSlugFieldToSurveys' => $baseDir . '/database/migrations/2017_02_09_122134_add_slug_field_to_surveys.php',

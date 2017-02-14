@@ -199,7 +199,7 @@ function drawTree(data, question_id){
     $.ajax({
               type: "POST",
               url: 'question-panel',
-              question_id: question_id,
+              question_id: quesId,
               data: {emp_id: empId, question_id: quesId},
               success: function(data) {
                   //return data;
@@ -208,8 +208,7 @@ function drawTree(data, question_id){
                   // drawTree(data, this.question_id);
               }
           });
-    console.log(parent);
-});
+
   }
 
 </script>

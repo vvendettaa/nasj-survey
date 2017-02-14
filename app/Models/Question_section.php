@@ -19,7 +19,8 @@ class Question_section extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $guarded = ['id'];
-    protected $fillable = ['survey_id', 'name', 'description', 'parent_id'];
+    protected $fillable = ['survey_id', 'question_id', 'name', 'description', 'parent_id'];
+    protected $attributes = ['question_id' => 0];
     // protected $hidden = [];
     // protected $dates = [];
 
@@ -43,6 +44,11 @@ class Question_section extends Model
     public function questions()
     {
         return $this->hasMany('App\Models\Question');
+    }
+
+    public function question()
+    {
+      return $this->belongsTo('App\Models\Question');
     }
 
     //each question might have one parent
