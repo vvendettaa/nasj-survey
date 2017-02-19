@@ -3,7 +3,7 @@
 	<?php
 	//die(print_r($entry->$column['entity']->$column['attribute']));
 		if ($entry->$column['entity']->$column['attribute']) {
-	    	echo $entry->$column['entity']->$column['attribute'];
+	    	die(print_r( $entry->$column['entity']->$column['attribute']));
 	    }
 	?>
 </td>
