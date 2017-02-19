@@ -42,7 +42,7 @@ class Answer extends Model
 
 
     protected $attributes = [
-   'emp_id' => 0
+   'employee_id' => 0
    ];
 
     /**
@@ -50,7 +50,7 @@ class Answer extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'survey_id', 'question_id', 'answer_value', 'answer_text', 'emp_id'];
+    protected $fillable = ['user_id', 'survey_id', 'question_id', 'answer_value', 'answer_text', 'employee_id'];
 
     /**
      * The attributes that should be hidden for arrays
