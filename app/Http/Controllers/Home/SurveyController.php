@@ -339,7 +339,7 @@ class SurveyController extends Controller
 
             <div id="collapse-'.$question['id'].'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-'.$question['id'].'">
             <div class="panel-body">
-              <div class="row">
+              <div class="row" id="row-id-q-'.$question['id'].'">
                 <div class="col-lg-2 flip tree" id="tree-'.$question['id'].'">
 
                 </div>
@@ -359,7 +359,7 @@ class SurveyController extends Controller
           </div>
           <!--/.box -->
         </div>
-        <div id="answers-'.$question['id'].'" class="special_question">
+        <div id="answers-'.$question['id'].'" class="special_question col-md-7">
         </div>
         </div>
         </div>
@@ -651,7 +651,7 @@ class SurveyController extends Controller
     foreach($e AS $row){
       $results .= '<li class="col-md-4">
         <img src="/vendor/adminlte/dist/img/default-50x50.gif"  alt="User Image">
-        <a class="users-list-name" id="emp-'.$row['id'].'" href="#" onclick="selectEmp('.$row['id'].','.$question_id.');">'.$row['name'].'</a>
+        <a class="users-list-name" id="emp-'.$row['id'].'" href="" onclick="selectEmp('.$row['id'].','.$question_id.', event);">'.$row['name'].'</a>
         <!-- <span class="users-list-date">Today</span> -->
       </li>';
     }
@@ -663,14 +663,16 @@ class SurveyController extends Controller
 
   public function getQuestionPanel(Request $request)
   {
-    $emp_id = ($request->input('emp_id')) ? $request->input('emp_id') : \App::abort(500, 'Something bad happened');
-    $question_id = ($request->input('question_id'))? $request->input('question_id') : \App::abort(500, 'Something bad happened');
-    $emp = Employee::where('id', $emp_id)->first()->toArray();
+    $emp_id = ($request->input('emp_id')) ? $request->input('emp_id') : die(0);
+    $this->data['question_id'] = ($request->input('question_id'))? $request->input('question_id') : die(0);
+    $this->data['emp'] = Employee::where('id', $emp_id)->first()->toArray();
     //the next two variables, have to combine them. Check performance.
-    $parent_question = Question::where('id', $question_id)->with('children')->first()->toArray();
-    $questions = Question::where('parent_id', $question_id)->get()->with(['answers' => function($query) {
-      $query->where('user_id', $this->user->id)->where('emp_id', $e->id);
-    }])->get()->toArray();
+    $parent_question = Question::where('id',$this->data['question_id'])->with('children')->first()->toArray();
+    $question_section_ids = Question::where('parent_id', $this->data['question_id'])->with('question_section')->get()->pluck('question_section')->pluck('id')->toArray();
+    $this->data['question_sections'] = Question_section::whereIn('id', $question_section_ids)->get();
+
+
+    return view('landing.ajax.question-panel', $this->data);
 
   }
 
@@ -678,32 +680,107 @@ class SurveyController extends Controller
 
   public function getQuestionlist(Request $request)
   {
-    $emp_id = ($request->input('emp_id'))? $request->input('emp_id') : \App::abort(500, 'Something bad happened');
-    $question_id = ($request->input('question_id'))? $request->input('question_id') : \App::abort(500, 'Something bad happened');
-    $emp = Employee::where('id', $emp_id)->first()->toArray();
-    //the next two variables, have to combine them. Check performance.
-    $parent_question = Question::where('id', $question_id)->with('children')->first()->toArray();
-    $questions = Question::where('parent_id', $question_id)->get()->with(['answers' => function($query) {
-      $query->where('user_id', $this->user->id)->where('emp_id', $e->id);
-  }])->get()->toArray();
+    $this->data['question_id'] = ($request->input('question_id'))? $request->input('question_id') : die(0);
+    $question_section_id = ($request->input('section_id'))? $request->input('section_id') : die(0);
+    // $sections = Question_section::where('parent_id', $question_section_id)->get();
+    // $questions = Question::
+    //   whereHas('question_section', function ($query) use( $question_section_id) {
+    //     $query->where('parent_id', $question_section_id);
+    //   })->with(array('answers' => function($query) {
+    //     $query->where('user_id', $this->user->id);
+    //   }))->
+    //   orderBy('question_section_id', 'ASC')->with('question_section')->get()->toArray();
 
-    $results = '<div class="col-md-7"><div class="panel-group" id="questions" role="tablist" aria-multiselectable="true">';
-    $results .= '<div class="col-md-12 flip" style="margin-bottom:10px;">
-    <div class="panel panel-info">
-      <div class="panel-heading" role="tab" id="heading-q-'.$parent_question['id'].'-'.$emp['id'].'">
-      <div class="panel-title">
-        <h4>
-          <a class="collapsed" role="button" data-toggle="collapse" data-parent="#questions" href="#collapse-q-'.$parent_question['id'].'-'.$emp['id'].'" aria-expanded="false" aria-controls="collapse-'.$parent_question['id'].'-'.$emp['id'].'">
-            '.$emp['name'].'
-          </a>
-          <span class="label label-default pull-left">
-            <span class="label label-success pull-left">'.$answered_questions_section.'</span><span class="label label-info pull-left">'.count($section['questions']).'</span>
-          </span>
-        </h4>
-      </div>
-    </div>
-    <div id="collapse-'.$section['id'].'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-'.$section['id'].'">
-    <div class="panel-body"><form class="form-horizontal" role="form" id="section-form-'.$section['id'].'">';
+    $questions = Question::where('parent_id', $this->data['question_id'])->with('question_section')->get();
+
+      $questions = Question_section::whereHas('questions', function($query) {
+        $query->with(['answers' => function($query) {
+          $query->whereIn('questions', $questions->pluck('id'))->where('user_id', $this->user->id);
+        }]);
+      })->with(['questions' => function($query) {
+          $query->where('parent_id', $this->data['question_id']);
+      }])->with('questions.answers')->get()->toArray();
+
+
+
+
+      //dd($answered_questions);
+
+
+      $this->data['results'] = '<div class="row"><div class="panel-group" id="questions" role="tablist" aria-multiselectable="true">';
+      $result_arr = [];
+      foreach ($questions as $section) {
+        $answered_questions_section = Answer::where('user_id', $this->user->id)->whereHas('question', function($query) use($section){
+          $query->where('question_section_id',$section['id']);
+        })->count();
+        $this->data['results'] .= '<div class="col-md-12 flip" style="margin-bottom:10px;">
+        <div class="panel panel-info">
+          <div class="panel-heading" role="tab" id="heading-'.$section['id'].'">
+          <div class="panel-title">
+            <h4>
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#questions" href="#collapse-'.$section['id'].'" aria-expanded="false" aria-controls="collapse-'.$section['id'].'">
+                '.$section['name'].'
+              </a>
+              <span class="label label-default pull-left">
+                <span class="label label-success pull-left">'.$answered_questions_section.'</span><span class="label label-info pull-left">'.count($section['questions']).'</span>
+              </span>
+            </h4>
+          </div>
+        </div>
+        <div id="collapse-'.$section['id'].'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-'.$section['id'].'">
+        <div class="panel-body"><form class="form-horizontal" role="form" id="section-form-'.$section['id'].'">';
+        foreach($section['questions'] AS $question){
+          $this->data['results'] .= '<div class="row">';
+          switch ($question['question_type_id']) {
+            //multiple radio
+            case '1':
+              $this->data['results'] .= $this->radio_question($question);
+              break;
+
+              //multiple checkbox
+              case '2':
+                $this->data['results'] .= $this->checkbox_question($question);
+              break;
+              //slider Number
+              case '3':
+                $this->data['results'] .= $this->slider_question($question);
+              break;
+              //slider rating
+              case '4':
+                $this->data['results'] .= $this->rating_question($question);
+              break;
+
+              //special question parent
+              case '5':
+                $this->data['results'] .= $this->special_question($question);
+              break;
+              //special question child
+              // case '6':
+              //
+              // break;
+
+              //case 7 and default textarea
+              default:
+                $this->data['results'] .= $this->textarea_question($question);
+              break;
+          }
+          $this->data['results'] .= '
+              </div>
+            ';
+        }
+        $this->data['results'] .= '
+        <div class="form-group" style="margin-top:20px;">
+           <div class="col-md-8 col-md-offset-2">
+              <input type="hidden" name="section_id" value="'.$question_section_id.'" />
+             <button type="button" class="btn btn-success col-md-12" onclick="saveSection('.$section['id'].')">Save</button>
+           </div>
+          </div>
+            </form></div></div></div></div>';
+      }
+      $this->data['results'] .= '</div></div></div>';
+
+    // dd($questions);
+    return $this->data['results'];
   }
 
 

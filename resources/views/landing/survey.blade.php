@@ -10,7 +10,7 @@
   <div class="col-md-12">
 
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs pull-right" role="tablist" id="question_section_tab">
+    <ul class="nav nav-tabs pull-right question_section_tab" role="tablist" id="question_section_tab">
       <?php $q_section_ids = [];?>
       @foreach($question_sections AS $question_section)
       <li role="presentation pull-right"><a href="#section-{{ $question_section->id }}" aria-controls="section-{{ $question_section->id }}" role="tab" data-toggle="tab">{{ $question_section->name }} <span class="label label-default" id="progress-section-{{ $question_section->id }}"></span></a></li>
@@ -38,7 +38,8 @@ $(document).ready(function(){
 
   getSectionProgress();
 
-  $('#question_section_tab a').click(function (e) {
+// question_section_tab
+  $('.question_section_tab a').click(function (e) {
   // e.preventDefault()
   var id = $(this).attr('href');
   $.ajax({
@@ -186,7 +187,7 @@ function drawTree(data, question_id){
                   data: {list_id: data.id, question_id: question_id},
                   success: function(data) {
                       //return data;
-                      console.log(data);
+                      // console.log(data);
                       $('#members-'+question_id).html(data);
                       // drawTree(data, this.question_id);
                   }
@@ -195,7 +196,8 @@ function drawTree(data, question_id){
     });
   }
 
-  function selectEmp(empId, quesId){
+  function selectEmp(empId, quesId, e){
+    e.preventDefault();
     $.ajax({
               type: "POST",
               url: 'question-panel',
@@ -204,11 +206,42 @@ function drawTree(data, question_id){
               success: function(data) {
                   //return data;
                   console.log(data);
+                  $("#answers-"+this.question_id).append(data);
+                  init_special_question_child();
+                  console.log("#answers-"+this.question_id);
                   // $('#members-'+question_id).html(data);
                   // drawTree(data, this.question_id);
               }
           });
 
+  }
+
+  function init_special_question_child(){
+
+    $('.special_question_section_tab a').click(function (e) {
+    // e.preventDefault()
+    var id = $(this).attr('href');
+    var ids = id.split('-');
+    var section_id = ids[2];
+    var emp_id = ids[3];
+    var question_id = ids[4];
+    $.ajax({
+          type: "POST",
+          url: 'question-list',
+          data: {section_id: section_id, emp_id: emp_id, question_id: question_id},
+          success: function(data) {
+              //return data;
+              // console.log(data);
+              $(''+ids[0]+'-'+ids[1]+'-'+ids[2]).html(data);
+              console.log(''+ids[0]+'-'+ids[1]+'-'+ids[2]);
+              init_slider_q();
+          }
+      });
+    $(this).tab('show');
+    // init_slider_q();
+
+    // console.log($(this).attr('href'));
+  });
   }
 
 </script>

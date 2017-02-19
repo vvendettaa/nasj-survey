@@ -28,6 +28,7 @@ Route::group(['middleware' => ['role:super_admin|admin|cxo|manager|emp|sys']], f
   Route::post('/s/employees-directory', ['as' => 'ajax employee directory', 'uses' => 'Home\SurveyController@getEmployeeDirectory']);
   Route::post('/s/employees-list', ['as' => 'ajax employee list', 'uses' => 'Home\SurveyController@getEmployeeList']);
   Route::post('/s/question-panel', ['as' => 'ajax question panel', 'uses' => 'Home\SurveyController@getQuestionPanel']);
+  Route::post('/s/question-list', ['as' => 'ajax question panel list', 'uses' => 'Home\SurveyController@getQuestionlist']);
 });
 
 Route::get('admin/test-view', ['as' => 'test-view', 'uses' => 'Admin\EmployeeCrudController@view_test']);
