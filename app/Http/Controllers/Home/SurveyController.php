@@ -61,13 +61,15 @@ class SurveyController extends Controller
                               ->get();
         $answered_c = (int)Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count();
         $total = (int)Question::where('survey_id', $this->data['selected_survey']->id)->count();
-        echo Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count();
-        echo ' sss   '. Question::where('survey_id', $this->data['selected_survey']->id)->count();
-        die();
+
         if($total != 0){
           $this->data['progress'] = (int)($answered_c / $total * 100);
         } else{
           $this->data['progress'] = 0;
+        }
+
+        if($total == $answered_c){
+          $this->data['progress'] = 100;
         }
 
 
@@ -226,8 +228,13 @@ class SurveyController extends Controller
   public function getSurveyProgress()
   {
     if(!empty($this->data['selected_survey']->id)){
-      $progress = (int)(Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count() / Question::where('survey_id', $this->data['selected_survey']->id)->count() * 100);
+      $total = (int)Question::where('survey_id', $this->data['selected_survey']->id)->count();
+      $ans = (int)Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count();
+      $progress = (int)($ans / $total * 100);
 
+      if($total == $ans){
+        $progress = 100;
+      }
       $data = '<div class="progress-bar progress-bar-info" style="width: '.$progress.'%;">Progress: '.$progress.'%</div>
           <span class="" style="">'.$progress.'%</span>';
           return $data;
