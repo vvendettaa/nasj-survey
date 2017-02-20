@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
-use App\Http\Requests\Question_sectionRequest as StoreRequest;
-use App\Http\Requests\Question_sectionRequest as UpdateRequest;
+use App\Http\Requests\Submitted_surveyRequest as StoreRequest;
+use App\Http\Requests\Submitted_surveyRequest as UpdateRequest;
 
-class Question_sectionCrudController extends CrudController
+class Submitted_surveyCrudController extends CrudController
 {
 
     public function setUp()
@@ -19,11 +19,9 @@ class Question_sectionCrudController extends CrudController
 		| BASIC CRUD INFORMATION
 		|--------------------------------------------------------------------------
 		*/
-        $this->crud->setModel("App\Models\Question_section");
-        $this->crud->setRoute("admin/question_section");
-        $this->crud->setEntityNameStrings('question section', 'question sections');
-
-        $this->crud->enableAjaxTable();
+        $this->crud->setModel("App\Models\Submitted_survey");
+        $this->crud->setRoute("admin/submitted_survey");
+        $this->crud->setEntityNameStrings('submitted_survey', 'submitted_surveys');
 
         /*
 		|--------------------------------------------------------------------------
@@ -31,12 +29,9 @@ class Question_sectionCrudController extends CrudController
 		|--------------------------------------------------------------------------
 		*/
 
-
-
         $this->crud->setFromDb();
 
-        $this->crud->removeColumns(['survey_id', 'parent_id', 'question_id']);
-        $this->crud->removeField('question_id');
+        $this->crud->removeColumns(['survey_id', 'user_id']);
 
         $this->crud->addColumn([
          // 1-n relationship
@@ -61,26 +56,25 @@ class Question_sectionCrudController extends CrudController
         ]);
 
         $this->crud->addColumn([
-        // 1-n relationship
-        'label' => "Parent", // Table column heading
-        'type' => "select",
-        'name' => 'parent_id', // the column that contains the ID of that connected entity;
-        'entity' => 'parent', // the method that defines the relationship in your Model
-        'attribute' => "name", // foreign key attribute that is shown to user
-        'model' => "App\Models\Question_section", // foreign key model
-        ]);
+         // 1-n relationship
+         'label' => "User", // Table column heading
+         'type' => "select",
+         'name' => 'user_id', // the column that contains the ID of that connected entity;
+         'entity' => 'user', // the method that defines the relationship in your Model
+         'attribute' => "name", // foreign key attribute that is shown to user
+         'model' => "App\Models\User", // foreign key model
+      ]);
 
         $this->crud->addField([  // Select2
-        'label' => "Parent",
-        'type' => 'select2_custom',
-        'name' => 'parent_id', // the db column for the foreign key
-        'entity' => 'parent', // the method that defines the relationship in your Model
-        'attribute' => 'name', // foreign key attribute that is shown to user
-        'attributes' => [
-          'id' => 'parent_sel'
-        ],
-        'model' => "App\Models\Question_section", // foreign key model
-        'allow_empty' => true
+           'label' => "User",
+           'type' => 'select2_custom',
+           'name' => 'user_id', // the db column for the foreign key
+           'entity' => 'user', // the method that defines the relationship in your Model
+           'attribute' => 'name', // foreign key attribute that is shown to user
+           'attributes' => [
+             'id' => 'user_sel'
+           ],
+           'model' => "App\Models\User" // foreign key model
         ]);
 
         // ------ CRUD FIELDS
@@ -150,12 +144,8 @@ class Question_sectionCrudController extends CrudController
 
 	public function store(StoreRequest $request)
 	{
-        if(empty($request->input('parent_id'))){
-            $request->request->set('parent_id', '0');
-        }
-
 		// your additional operations before save here
-        $redirect_location = parent::storeCrud($request);
+        $redirect_location = parent::storeCrud();
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;

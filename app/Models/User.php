@@ -73,6 +73,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Answer');
     }
 
+    public function submitted_survey()
+    {
+        return $this->hasMany('App\Models\Submitted_survey');
+    }
+
     /*
 	|--------------------------------------------------------------------------
 	| SCOPES

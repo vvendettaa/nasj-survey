@@ -72,8 +72,8 @@
           <!-- <span class='nav navbar-text' >Survey Progress: </span> -->
             <div class="nav navbar-text progress progress-striped" style="width: 40%;" id="progress">
 
-                    <div class="progress-bar progress-bar-info" style="width: {{ $progress }}%;"></div>
-                    <span class="" style="">Progress: {{ $progress }}%</span>
+                    <div class="progress-bar progress-bar-info" style="width: {{ $progress }}%;"><span class="" style="">Progress: {{ $progress }}%</span></div>
+                    <span class="" style="">{{ $progress }}%</span>
 
             </div>
           @endif

@@ -29,6 +29,7 @@ Route::group(['middleware' => ['role:super_admin|admin|cxo|manager|emp|sys']], f
   Route::post('/s/employees-list', ['as' => 'ajax employee list', 'uses' => 'Home\SurveyController@getEmployeeList']);
   Route::post('/s/question-panel', ['as' => 'ajax question panel', 'uses' => 'Home\SurveyController@getQuestionPanel']);
   Route::post('/s/question-list', ['as' => 'ajax question panel list', 'uses' => 'Home\SurveyController@getQuestionlist']);
+  Route::post('/s/submit-survey', ['as' => 'ajax submit survey', 'uses' => 'Home\SurveyController@submitSurvey']);
 });
 
 Route::get('admin/test-view', ['as' => 'test-view', 'uses' => 'Admin\EmployeeCrudController@view_test']);
@@ -55,6 +56,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin']], 
     CRUD::resource('employee', 'Admin\EmployeeCrudController');
     CRUD::resource('directory_import', 'Admin\Directory_importCrudController');
     CRUD::resource('question_import', 'Admin\Question_importCrudController');
+
+    CRUD::resource('submitted_survey', 'Admin\Submitted_surveyCrudController');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['role:super_admin|admin|sys']], function() {

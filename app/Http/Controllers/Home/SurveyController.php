@@ -11,6 +11,7 @@ use App\Models\Question_type;
 use App\Models\Question_section;
 use App\Models\Answer;
 use App\Models\Employee;
+use App\Models\Submitted_survey;
 
 class SurveyController extends Controller
 {
@@ -28,8 +29,8 @@ class SurveyController extends Controller
         if(\Auth::user()){
             $this->user = \Auth::user();
             $this->user_role = $this->user->roles()->get()[0];
-
-            $this->data['surveys'] = Survey::where('start_time', '<=', date('Y-m-d H:i:s'))->where('end_time', '>', date('Y-m-d H:i:s'))->get()->toArray();
+            $submitted_surveys = Submitted_survey::where('user_id', $this->user->id)->get()->pluck('survey_id')->toArray();
+            $this->data['surveys'] = Survey::where('start_time', '<=', date('Y-m-d H:i:s'))->where('end_time', '>', date('Y-m-d H:i:s'))->whereNotIn('id', $submitted_surveys)->get()->toArray();
             $this->data['selected_survey'] = (session('selected_survey'))? session('selected_survey') : new Survey();
             // dd($request);
           } else{
@@ -224,8 +225,8 @@ class SurveyController extends Controller
     if(!empty($this->data['selected_survey']->id)){
       $progress = (int)(Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count() / Question::where('survey_id', $this->data['selected_survey']->id)->count() * 100);
 
-      $data = '<div class="progress-bar progress-bar-info" style="width: '.$progress.'%;"></div>
-          <span class="" style="">Progress: '.$progress.'%</span>';
+      $data = '<div class="progress-bar progress-bar-info" style="width: '.$progress.'%;">Progress: '.$progress.'%</div>
+          <span class="" style="">'.$progress.'%</span>';
           return $data;
       }
 
@@ -782,6 +783,16 @@ class SurveyController extends Controller
 
     // dd($questions);
     return $this->data['results'];
+  }
+
+
+  public function submitSurvey(Request $request)
+  {
+    $start = Answer::where('user_id', $this->user->id)->where('survey_id' , $this->data['selected_survey']->id)->orderBy('created_at', 'ASC')->first();
+
+    $add = Submitted_survey::create(['survey_id' => $this->data['selected_survey']->id, 'user_id' => $this->user->id, 'start' => $start->created_at->format('Y-m-d H:i:s'), 'end' => date("Y-m-d H:i:s")]);
+
+    return 1;
   }
 
 

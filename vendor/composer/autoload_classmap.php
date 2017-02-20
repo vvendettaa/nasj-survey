@@ -30,6 +30,7 @@ return array(
     'CreateQuestionsTable' => $baseDir . '/database/migrations/2017_01_29_161121_create_questions_table.php',
     'CreateRevisionsTable' => $vendorDir . '/venturecraft/revisionable/src/migrations/2013_04_09_062329_create_revisions_table.php',
     'CreateSkillsTable' => $baseDir . '/database/migrations/2017_01_22_145842_create_skills_table.php',
+    'CreateSubmittedSurveyTable' => $baseDir . '/database/migrations/2017_02_20_165412_create_submitted_survey_table.php',
     'CreateSurveyTable' => $baseDir . '/database/migrations/2017_01_29_143119_create_survey_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',

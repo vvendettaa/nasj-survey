@@ -462,6 +462,7 @@ class ComposerStaticInitbf91d3bd334b9bb7386abb0ce0f57dd8
         'CreateQuestionsTable' => __DIR__ . '/../..' . '/database/migrations/2017_01_29_161121_create_questions_table.php',
         'CreateRevisionsTable' => __DIR__ . '/..' . '/venturecraft/revisionable/src/migrations/2013_04_09_062329_create_revisions_table.php',
         'CreateSkillsTable' => __DIR__ . '/../..' . '/database/migrations/2017_01_22_145842_create_skills_table.php',
+        'CreateSubmittedSurveyTable' => __DIR__ . '/../..' . '/database/migrations/2017_02_20_165412_create_submitted_survey_table.php',
         'CreateSurveyTable' => __DIR__ . '/../..' . '/database/migrations/2017_01_29_143119_create_survey_table.php',
         'CreateUsersTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_000000_create_users_table.php',
         'DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeds/DatabaseSeeder.php',

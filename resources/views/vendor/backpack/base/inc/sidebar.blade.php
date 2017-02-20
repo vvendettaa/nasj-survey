@@ -28,6 +28,7 @@
           @endrole
 
           @role(['super_admin', 'admin'])
+          <li><a href="{{ url('admin/submitted_survey') }}"><i class="fa fa-dashboard"></i> <span>Submitted Surveys</span></a></li>
           <li class="header">HR Management</li>
           <li><a href="{{ url('admin/employee') }}"><i class="fa fa-briefcase"></i> <span>Manage Directory</span></a></li>
           <li><a href="{{ url('admin/directory_import') }}"><i class="fa  fa-upload"></i> <span>Import Directory</span></a></li>

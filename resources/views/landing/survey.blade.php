@@ -6,6 +6,25 @@
 
 
 @section('content')
+
+@if(isset($complete))
+<div class="row" id="survey_submit" style="display: block;">
+  <div class="col-md-8 col-md-offset-2">
+     <input type="hidden" name="servey_id" id="survey_id" value="{{ $selected_survey->id }}" />
+    <button type="button" class="btn btn-success col-md-12" onclick="saveSurvey('{{ $selected_survey->id }}')">Submit Survey</button>
+  </div>
+</div>
+
+@else
+<div class="row" id="survey_submit" style="display: none;">
+  <div class="col-md-8 col-md-offset-2">
+     <input type="hidden" name="servey_id" id="survey_id" value="{{ $selected_survey->id }}" />
+    <button type="button" class="btn btn-success col-md-12" onclick="saveSurvey('{{ $selected_survey->id }}')">Submit Survey</button>
+  </div>
+</div>
+
+@endif
+
 <div class="row">
   <div class="col-md-12">
 
@@ -116,6 +135,13 @@ function getProgress(){
             // $(''+id).html(data);
         }
     });
+    var w = $("#progress").children('div').attr('style');
+    var prog = parseInt(w.substr(7).slice(0, -2));
+    if(prog == 100){
+      $("#survey_submit").toggle(true);
+    }
+    // console.log(prog);
+    // if($("#progress").children('<div>').c)
 }
 
 function serializePost(form) {
@@ -244,6 +270,25 @@ function drawTree(data, question_id){
 
     // console.log($(this).attr('href'));
   });
+  }
+
+  function saveSurvey(survey_id){
+
+    $.ajax({
+          type: "POST",
+          url: 'submit-survey',
+          data: {survey_id: survey_id},
+          success: function(data) {
+              //return data;
+              // console.log(data);
+              if(data == '1'){
+                alert('Your survey has been submitted.');
+                window.location.href = "/";
+              }
+          }
+      });
+
+
   }
 
 </script>

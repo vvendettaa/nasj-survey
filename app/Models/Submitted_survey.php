@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 
-class Survey extends Model
+class Submitted_survey extends Model
 {
     use CrudTrait;
 
@@ -15,12 +15,12 @@ class Survey extends Model
 	|--------------------------------------------------------------------------
 	*/
 
-    protected $table = 'surveys';
+    protected $table = 'submitted_surveys';
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'description', 'start_time', 'end_time', 'slug'];
-    protected $hidden = [];
+    protected $fillable = ['survey_id', 'user_id', 'start', 'end'];
+    // protected $hidden = [];
     // protected $dates = [];
 
     /*
@@ -28,12 +28,6 @@ class Survey extends Model
 	| FUNCTIONS
 	|--------------------------------------------------------------------------
 	*/
-  public static function create(array $attributes = [])
-  {
-    $attributes['slug'] = str_slug($attributes['name'], '-');
-    return parent::create($attributes);
-  }
-
 
     /*
 	|--------------------------------------------------------------------------
@@ -41,25 +35,15 @@ class Survey extends Model
 	|--------------------------------------------------------------------------
 	*/
 
-  public function question_sections()
-  {
-      return $this->hasMany('App\Models\Question_section');
-  }
+  public function survey()
+    {
+        return $this->belongsTo('App\Models\Survey');
+    }
 
-  public function questions()
-  {
-      return $this->hasMany('App\Models\Question');
-  }
-
-  public function answers()
-  {
-      return $this->hasMany('App\Models\Answer');
-  }
-
-  public function submitted()
-  {
-      return $this->hasMany('App\Models\Submitted_survey');
-  }
+    public function user()
+      {
+          return $this->belongsTo('App\Models\User');
+      }
 
     /*
 	|--------------------------------------------------------------------------
