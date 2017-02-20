@@ -61,6 +61,9 @@ class SurveyController extends Controller
                               ->get();
         $answered_c = (int)Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count();
         $total = (int)Question::where('survey_id', $this->data['selected_survey']->id)->count();
+        echo Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count();
+        echo ' sss   '. Question::where('survey_id', $this->data['selected_survey']->id)->count();
+        die();
         if($total != 0){
           $this->data['progress'] = (int)($answered_c / $total * 100);
         } else{
