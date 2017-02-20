@@ -61,7 +61,7 @@ $(document).ready(function(){
 
 });
 
-function saveSection(section_id, sec){
+function saveSection(section_id){
   var data = serializePost("#section-form-"+section_id);
   console.log(data);
   $.ajax({
@@ -76,9 +76,11 @@ function saveSection(section_id, sec){
             }
         }
     });
-  $('#progress-section-'+sec).parent().trigger( "click" );
-  console.log('#progress-section-'+sec);
-  console.log($('#progress-section-'+sec).parent('a').html());
+    var hrefid = $('#progress-s-section-'+section_id).closest('div[role="tabpanel"]').attr("id");
+    $('a[href="#'+hrefid+'"]').trigger('click');
+  // $('#progress-section-'+sec).parent().trigger( "click" );
+  // console.log('#progress-section-'+sec);
+  // console.log($('#progress-section-'+sec).parent('a').html());
   getSectionProgress();
   getProgress();
 

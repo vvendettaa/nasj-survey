@@ -73,7 +73,7 @@
             <div class="nav navbar-text progress progress-striped" style="width: 40%;" id="progress">
 
                     <div class="progress-bar progress-bar-info" style="width: {{ $progress }}%;"></div>
-                    <span class="" style="padding-right: 240px">Progress: {{ $progress }}%</span>
+                    <span class="" style="">Progress: {{ $progress }}%</span>
 
             </div>
           @endif

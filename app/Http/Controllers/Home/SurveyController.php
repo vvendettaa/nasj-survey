@@ -104,7 +104,7 @@ class SurveyController extends Controller
         $answered_questions_section = Answer::where('user_id', $this->user->id)->whereHas('question', function($query) use($section){
           $query->where('question_section_id',$section['id']);
         })->count();
-        $this->data['results'] .= '<div class="col-md-12 flip" style="margin-bottom:10px;">
+        $this->data['results'] .= '<div class="col-md-12 flip" style="margin-bottom:10px;" id="progress-s-section-'.$section['id'].'">
         <div class="panel panel-info">
           <div class="panel-heading" role="tab" id="heading-'.$section['id'].'">
           <div class="panel-title">
@@ -224,7 +224,7 @@ class SurveyController extends Controller
       $progress = (int)(Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count() / Question::where('survey_id', $this->data['selected_survey']->id)->count() * 100);
 
       $data = '<div class="progress-bar progress-bar-info" style="width: '.$progress.'%;"></div>
-          <span class="" style="padding-right: 240px">Progress: '.$progress.'%</span>';
+          <span class="" style="">Progress: '.$progress.'%</span>';
           return $data;
       }
 
