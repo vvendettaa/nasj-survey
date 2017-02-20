@@ -56,6 +56,7 @@ class SurveyController extends Controller
         $this->data['question_sections'] = Question_section::
                               where('survey_id', $this->data['selected_survey']->id)
                               ->where('parent_id', '0')
+                              ->orderBy('id', 'desc')
                               ->get();
         $answered_c = (int)Answer::where('user_id', $this->user->id)->where('survey_id', $this->data['selected_survey']->id)->count();
         $total = (int)Question::where('survey_id', $this->data['selected_survey']->id)->count();
