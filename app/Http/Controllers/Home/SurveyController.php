@@ -70,6 +70,7 @@ class SurveyController extends Controller
 
         if($total == $answered_c){
           $this->data['progress'] = 100;
+          $this->data['complete'] = true;
         }
 
 
