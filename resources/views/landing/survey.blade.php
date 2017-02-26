@@ -163,9 +163,9 @@ function getProgress(){
         success: function(data) {
             //return data;
             $('#progress').html(data);
-            var d = $.parseHTML(data);
-            var w = d.children('div').attr('style');
-            var prog = parseInt(w.substr(7).slice(0, -2));
+            
+            var d = data.substr(58);
+            var prog = parseInt(d.substr(0, d.indexOf('%')));
             console.log(prog);
             if(prog == 100){
               $("#survey_submit").show();
