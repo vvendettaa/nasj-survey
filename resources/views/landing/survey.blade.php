@@ -169,6 +169,7 @@ function getProgress(){
     });
     var w = $("#progress").children('div').attr('style');
     var prog = parseInt(w.substr(7).slice(0, -2));
+    console.log(prog);
     if(prog == 100){
       $("#survey_submit").show();
     }
