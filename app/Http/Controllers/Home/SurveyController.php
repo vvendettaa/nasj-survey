@@ -242,7 +242,7 @@ class SurveyController extends Controller
       }
 
   }
-  
+
 
   private function radio_question($question)
   {
@@ -255,6 +255,7 @@ class SurveyController extends Controller
     $count = 0;
     $answers_l = (is_array($question['answer']))? $question['answer'] : json_decode($question['answer']);
       foreach($answers_l AS $answer){
+        dd($question['answers']);
         $checked = (isset($question['answers'][0]['answer_value']) && (array_search((string)$count, json_decode($question['answers'][0]['answer_value'])) !== false))? 'checked="checked"' : '';
         $results .= '<div class="radio-inline"><label>
           <input type="radio" name="question_'.$question['id'].'[]" id="question_'.$question['id'].'_'.$count.'" value="'.$answer.','.$count++.'" '.$checked.'>
