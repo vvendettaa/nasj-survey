@@ -53,6 +53,8 @@
 <script>
 $(document).ready(function(){
 
+  init_pnotify();
+
   // init_slider_q();
 
   getSectionProgress();
@@ -85,24 +87,54 @@ function saveSection(section_id){
   console.log(data);
   $.ajax({
         type: "POST",
+        section_id: section_id,
         url: 'savesection',
         data: data,
         success: function(data) {
             //return data;
             // console.log(data);
             if(data == '1'){
-              alert('Your answers has been saved.');
+              new PNotify({
+                  title: "Section Saved",
+                  text: "Your answers has been saved.",
+                  type: "success"
+              });
+              getQuestionSectionProgress(this.section_id);
+              getSectionProgress();
+              getProgress();
+            } else{
+              new PNotify({
+                  title: "Section Not Saved",
+                  text: "There has been an error, please try again.",
+                  type: "warning"
+              });
             }
         }
     });
-    var hrefid = $('#progress-s-section-'+section_id).closest('div[role="tabpanel"]').attr("id");
-    $('a[href="#'+hrefid+'"]').trigger('click');
+    // var hrefid = $('#progress-s-section-'+section_id).closest('div[role="tabpanel"]').attr("id");
+    // $('a[href="#'+hrefid+'"]').trigger('click');
   // $('#progress-section-'+sec).parent().trigger( "click" );
   // console.log('#progress-section-'+sec);
   // console.log($('#progress-section-'+sec).parent('a').html());
-  getSectionProgress();
-  getProgress();
 
+
+}
+
+function getQuestionSectionProgress(section_id){
+  $.ajax({
+        type: "POST",
+        section_id: section_id,
+        data: {section_id: section_id},
+        url: 'q-section-prog',
+
+        success: function(data) {
+            //return data;
+            // console.log(data);
+            $("#progress-section-counter-"+this.section_id).html(data);
+
+            // $(''+id).html(data);
+        }
+    });
 }
 
 function getSectionProgress(){
@@ -282,13 +314,43 @@ function drawTree(data, question_id){
               //return data;
               // console.log(data);
               if(data == '1'){
-                alert('Your survey has been submitted.');
+                new PNotify({
+                    title: "Survey Saved",
+                    text: "Your survey has been submitted.",
+                    type: "success"
+                });
                 window.location.href = "/";
+              } else{
+                new PNotify({
+                    title: "Survey Not Saved",
+                    text: "There has been an error, please try again.",
+                    type: "warning"
+                });
               }
           }
       });
 
 
+  }
+
+  function init_pnotify(){
+    PNotify.prototype.options.styling = "bootstrap3";
+    PNotify.prototype.options.styling = "fontawesome";
+
+    @foreach (Alert::getMessages() as $type => $messages)
+        @foreach ($messages as $message)
+
+            $(function(){
+              new PNotify({
+                // title: 'Regular Notice',
+                text: "{{ $message }}",
+                type: "{{ $type }}",
+                icon: false
+              });
+            });
+
+        @endforeach
+    @endforeach
   }
 
 </script>

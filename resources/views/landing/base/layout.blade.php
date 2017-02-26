@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/') }}/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/backpack/pnotify/pnotify.custom.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/journal-bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap-slider.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/star-rating.min.css') }}">
@@ -135,6 +136,7 @@
     <script src="{{ asset('js/bootstrap-slider.js') }}"></script>
     <script src="{{ asset('js/star-rating.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-treeview.js') }}"></script>
+    <script src="{{ asset('vendor\backpack\pnotify\pnotify.custom.min.js')}}"></script>
 
 
     <!-- page script -->

@@ -122,7 +122,7 @@ class SurveyController extends Controller
               <a class="collapsed" role="button" data-toggle="collapse" data-parent="#questions" href="#collapse-'.$section['id'].'" aria-expanded="false" aria-controls="collapse-'.$section['id'].'">
                 '.$section['name'].'
               </a>
-              <span class="label label-default pull-left">
+              <span class="label label-default pull-left" id="progress-section-counter-'.$section['id'].'">
                 <span class="label label-success pull-left">'.$answered_questions_section.'</span><span class="label label-info pull-left">'.count($section['questions']).'</span>
               </span>
             </h4>
@@ -244,7 +244,6 @@ class SurveyController extends Controller
       }
 
   }
-
 
   private function radio_question($question)
   {
@@ -809,6 +808,23 @@ class SurveyController extends Controller
     $add = Submitted_survey::create(['survey_id' => $this->data['selected_survey']->id, 'user_id' => $this->user->id, 'start' => $start->created_at->format('Y-m-d H:i:s'), 'end' => date("Y-m-d H:i:s")]);
 
     return 1;
+  }
+
+  public function getQuestionSectionProgress(Request $request)
+  {
+    $section_id = ($request->input('section_id'))? $request->input('section_id') : die(0);
+    //requirs refacoring.
+    $questions = Question_section::where('id', $section_id)->with(['questions' => function($query) {
+        $query->where('parent_id', '0');
+    }])->first()->toArray();
+    //dd($questions);
+    $answered_questions_section = Answer::where('user_id', $this->user->id)->whereHas('question', function($query) use($questions){
+      $query->where('question_section_id',$questions['id']);
+    })->count();
+    $q_count = count($questions['questions']);
+    $results = '<span class="label label-success pull-left">'.$answered_questions_section.'</span><span class="label label-info pull-left">'.$q_count.'</span>';
+
+    echo $results;
   }
 
 
