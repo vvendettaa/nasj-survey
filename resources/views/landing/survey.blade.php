@@ -163,16 +163,22 @@ function getProgress(){
         success: function(data) {
             //return data;
             $('#progress').html(data);
-
+            var d = $.parseHTML(data);
+            var w = d.children('div').attr('style');
+            var prog = parseInt(w.substr(7).slice(0, -2));
+            console.log(prog);
+            if(prog == 100){
+              $("#survey_submit").show();
+            }
             // $(''+id).html(data);
         }
     });
-    var w = $("#progress").children('div').attr('style');
-    var prog = parseInt(w.substr(7).slice(0, -2));
-    console.log(prog);
-    if(prog == 100){
-      $("#survey_submit").show();
-    }
+    // var w = $("#progress").children('div').attr('style');
+    // var prog = parseInt(w.substr(7).slice(0, -2));
+    // console.log(prog);
+    // if(prog == 100){
+    //   $("#survey_submit").show();
+    // }
     // console.log(prog);
     // if($("#progress").children('<div>').c)
 }
