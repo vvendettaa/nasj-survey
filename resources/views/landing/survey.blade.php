@@ -163,7 +163,7 @@ function getProgress(){
         success: function(data) {
             //return data;
             $('#progress').html(data);
-            
+
             var d = data.substr(58);
             var prog = parseInt(d.substr(0, d.indexOf('%')));
             console.log(prog);
@@ -343,6 +343,7 @@ function drawTree(data, question_id){
   function init_pnotify(){
     PNotify.prototype.options.styling = "bootstrap3";
     PNotify.prototype.options.styling = "fontawesome";
+    PNotify.prototype.options.delay = 2000;
 
     @foreach (Alert::getMessages() as $type => $messages)
         @foreach ($messages as $message)
