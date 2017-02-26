@@ -98,7 +98,9 @@ class SurveyController extends Controller
         }]);
       })->with(['questions' => function($query) {
           $query->where('parent_id', '0');
-      }])->with('questions.answers')->get()->toArray();
+      }])->with(['questions.answers' => function($query) {
+          $query->where('user_id', $this->user->id);
+      }])->get()->toArray();
 
 
 
@@ -714,7 +716,9 @@ class SurveyController extends Controller
         }]);
       })->with(['questions' => function($query) {
           $query->where('parent_id', $this->data['question_id']);
-      }])->with('questions.answers')->get()->toArray();
+      }])->with(['questions.answers' => function($query) {
+          $query->where('user_id', $this->user->id);
+      }])->get()->toArray();
 
 
 
