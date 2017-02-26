@@ -170,7 +170,7 @@ function getProgress(){
     var w = $("#progress").children('div').attr('style');
     var prog = parseInt(w.substr(7).slice(0, -2));
     if(prog == 100){
-      $("#survey_submit").toggle(true);
+      $("#survey_submit").show();
     }
     // console.log(prog);
     // if($("#progress").children('<div>').c)
